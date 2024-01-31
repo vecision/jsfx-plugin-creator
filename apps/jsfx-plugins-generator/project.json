@@ -1,0 +1,57 @@
+{
+  "name": "jsfx-plugin-creator",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/jsfx-plugins-generator",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/jsfx-plugins-generator"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/jsfx-plugins-generator"
+        },
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "jsfx-plugin-creator:build",
+        "dev": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "jsfx-plugin-creator:build:development",
+          "dev": true
+        },
+        "production": {
+          "buildTarget": "jsfx-plugin-creator:build:production",
+          "dev": false
+        }
+      }
+    },
+    "export": {
+      "executor": "@nx/next:export",
+      "options": {
+        "buildTarget": "jsfx-plugin-creator:build:production"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/jsfx-plugins-generator/jest.config.ts"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  },
+  "tags": []
+}

@@ -1,0 +1,73 @@
+.form {
+  display: grid;
+  margin: 1em;
+  gap: 1em;
+
+  @media (min-width: 900px) {
+    grid-template-columns: 1fr clamp(300px, 40svw, 700px);
+  }
+}
+
+.info {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.sliders {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.slider {
+  display: flex;
+  flex-flow: row nowrap;
+  padding: 0.5em;
+  border-radius: var(--brs-medium);
+  transition: background var(--trs-instant);
+
+  &:hover,
+  &:focus-within {
+    background: #{rgba(var(--color-on-level), 0.1)};
+  }
+}
+
+.control {
+  margin-left: auto;
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 0.5em;
+
+  button {
+    --_size: 30px;
+    width: var(--_size);
+    height: var(--_size);
+    background: #{rgba(var(--color-on-level), 0.3)};
+    color: var(--color-on-level);
+    border-radius: 50%;
+    transition: scale var(--trs-instant);
+    box-shadow: 0 0 10px transparent;
+
+    &:not([disabled]) {
+      cursor: pointer;
+    }
+
+    &[disabled] {
+      cursor: not-allowed;
+      background: #{rgba(var(--color-on-level), 0.15)};
+    }
+
+    &:hover {
+      scale: 1.2;
+    }
+  }
+}
+
+.pre {
+  font-size: 14px;
+  background: rgba(var(--color-black), 0.2);
+  padding: 1.5em;
+  overflow: auto;
+  height: 85svh;
+  border-radius: var(--brs-large);
+  cursor: url('/assets/copy-paste.png'), auto;
+}

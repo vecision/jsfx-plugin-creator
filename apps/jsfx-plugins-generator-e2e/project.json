@@ -1,0 +1,20 @@
+{
+  "name": "jsfx-plugin-creator-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/jsfx-plugins-generator-e2e/src",
+  "targets": {
+    "e2e": {
+      "executor": "@nx/playwright:playwright",
+      "outputs": [
+        "{workspaceRoot}/dist/.playwright/apps/jsfx-plugins-generator-e2e"
+      ],
+      "options": {
+        "config": "apps/jsfx-plugins-generator-e2e/playwright.config.ts"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  },
+  "implicitDependencies": ["jsfx-plugin-creator"]
+}
