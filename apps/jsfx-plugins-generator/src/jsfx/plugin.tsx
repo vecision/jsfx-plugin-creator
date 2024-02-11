@@ -1,15 +1,9 @@
-import {
-  useForm,
-  useFieldArray,
-  UseFormReturn,
-  UseFieldArrayReturn,
-} from 'react-hook-form';
+import { Form, UseFormReturnType } from '@utils-common';
+import { UseFieldArrayReturn, useFieldArray } from 'react-hook-form';
+
+import { blockTemplate, jsfxPluginTemplate } from '@jsfx-plugins-generator/jsfx/plugin.template';
+
 import styles from './plugin.module.scss';
-import {
-  blockTemplate,
-  jsfxPluginTemplate,
-} from 'apps/jsfx-plugins-generator/src/jsfx/plugin.template';
-import { useEffect } from 'react';
 
 export type SliderProps = {
   /**
@@ -72,11 +66,13 @@ const defaultValues: SliderFormValues = {
 };
 
 export const SliderForm = () => {
-  const form = useForm<SliderFormValues>({ defaultValues });
+  const form = Form.useForm<SliderFormValues>({ defaultValues });
+
   const fieldArray = useFieldArray({
     control: form.control, // control props comes from useForm (optional: if you are using FormContext)
     name: 'sliders', // unique name for your Field Array,
   });
+
   const onSubmit = (data: SliderFormValues) => console.log(data);
 
   const template = jsfxPluginTemplate
@@ -91,9 +87,9 @@ export const SliderForm = () => {
     .replace(
       /%SLIDERS%/,
       form.watch('sliders').reduce((acc, slider, index) => {
-        return `${acc}slider${index + 1}:${slider.defaultValue}<${
-          slider.minValue
-        },${slider.maxValue},1>${slider.name} (${slider.cc})\n`;
+        return `${acc}slider${index + 1}:${slider.defaultValue}<${slider.minValue},${slider.maxValue},1>${
+          slider.name
+        } (${slider.cc})\n`;
       }, '')
     )
     .replace(
@@ -112,11 +108,7 @@ export const SliderForm = () => {
           <legend>Plugin information</legend>
           <label>
             Name
-            <input
-              placeholder={'Plugin name'}
-              className={styles.input}
-              {...form?.register('name')}
-            />
+            <input placeholder={'Plugin name'} className={styles.input} {...form?.register('name')} />
           </label>
 
           <div className={styles.control}>
@@ -141,7 +133,7 @@ export const SliderForm = () => {
         <h3>Click the code block to copy</h3>
         <pre
           className={styles.pre}
-          onClick={(event) => {
+          onClick={event => {
             const { textContent } = event.target as HTMLElement;
 
             if (!textContent) {
@@ -169,7 +161,7 @@ export const SliderField = ({
   id?: string;
   value?: string;
   index: number;
-  form: UseFormReturn<SliderFormValues, any, undefined>;
+  form: UseFormReturnType<SliderFormValues, any>;
   fieldArray: UseFieldArrayReturn<SliderFormValues, 'sliders', 'id'>;
 }) => {
   return (
@@ -182,11 +174,7 @@ export const SliderField = ({
       />
 
       <div className={styles.control}>
-        <button
-          type="button"
-          disabled={index === 0}
-          onClick={() => fieldArray.move(index, index - 1)}
-        >
+        <button type="button" disabled={index === 0} onClick={() => fieldArray.move(index, index - 1)}>
           ↥
         </button>
         <button
@@ -196,12 +184,7 @@ export const SliderField = ({
         >
           ↧
         </button>
-        <button
-          type="button"
-          onClick={() =>
-            fieldArray.insert(index + 1, { ...sliderDefault, name: '' })
-          }
-        >
+        <button type="button" onClick={() => fieldArray.insert(index + 1, { ...sliderDefault, name: '' })}>
           +
         </button>
       </div>

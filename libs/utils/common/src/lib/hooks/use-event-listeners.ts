@@ -1,5 +1,5 @@
-import debounce from 'lodash/debounce';
-import throttle from 'lodash/throttle';
+// import debounce from 'lodash/debounce';
+// import throttle from 'lodash/throttle';
 import { DependencyList, useEffect } from 'react';
 
 type EventListenerCallback<K extends keyof WindowEventMap> = (ev: WindowEventMap[K]) => void;
@@ -65,16 +65,16 @@ export const useEventListener = <K extends keyof WindowEventMap>(
    * event if the callback is undefined. This makes it possible to disable the event listener temporarily.
    */
   const handleCallback: EventListenerCallback<K> = e => callback?.(e);
-
   /**
    * We then create a listener based on the configuration and the callback
    * This makes it possible to pass the event listener a throttled or debounced callback
    */
-  const listener = config?.debounce
-    ? debounce(handleCallback, config.debounce)
-    : config?.throttle
-    ? throttle(handleCallback, config.throttle)
-    : handleCallback;
+  const listener = handleCallback;
+  // const listener = config?.debounce
+  //   ? debounce(handleCallback, config.debounce)
+  //   : config?.throttle
+  //   ? throttle(handleCallback, config.throttle)
+  // : handleCallback;
 
   useEffect(() => {
     // Add the event listener

@@ -9,6 +9,7 @@
     "^@jsfx-plugins-generator/utils/(.*)$",
     "^@jsfx-plugins-generator/pages/(.*)$",
     "^@jsfx-plugins-generator/services/(.*)$",
+    "^@jsfx-plugins-generator/features/(.*)$",
     "^@jsfx-plugins-generator/theme/(.*)$",
     "^@jsfx-plugins-generator/(.*)$",
     "^(../|./)(.*)?(?<!.module.scss)$",
