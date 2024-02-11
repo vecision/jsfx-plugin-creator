@@ -1,7 +1,7 @@
 {
   "root": true,
   "ignorePatterns": ["**/*"],
-  "plugins": ["@nx"],
+  "plugins": ["@nx", "unused-imports"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
@@ -27,7 +27,57 @@
       "rules": {
         "@typescript-eslint/consistent-type-definitions": ["warn", "type"],
         "@typescript-eslint/no-unused-vars": "warn",
-        "@typescript-eslint/no-explicit-any": "warn"
+        "@typescript-eslint/no-explicit-any": "warn",
+        "object-curly-newline": 0,
+        "operator-linebreak": 0,
+        "padded-blocks": [1, { "blocks": "never" }],
+        "no-unused-vars": "off",
+        "no-extra-parens": "off",
+        "no-useless-escape": "off",
+        "no-empty": "warn",
+        "unused-imports/no-unused-imports": "warn",
+        "unused-imports/no-unused-vars": [
+          "warn",
+          {
+            "vars": "all",
+            "varsIgnorePattern": "^_",
+            "args": "after-used",
+            "argsIgnorePattern": "^_"
+          }
+        ],
+        "padding-line-between-statements": [
+          1,
+          {
+            "blankLine": "always",
+            "prev": ["block", "block-like", "cjs-export", "class", "export", "function", "break"],
+            "next": "*"
+          },
+          {
+            "blankLine": "always",
+            "prev": ["multiline-const", "singleline-const"],
+            "next": ["return"]
+          },
+          {
+            "blankLine": "always",
+            "prev": ["multiline-const"],
+            "next": ["singleline-const"]
+          },
+          {
+            "blankLine": "always",
+            "prev": ["singleline-const"],
+            "next": ["multiline-const"]
+          },
+          {
+            "blankLine": "never",
+            "prev": ["singleline-const"],
+            "next": ["singleline-const"]
+          },
+          {
+            "blankLine": "any",
+            "prev": ["export", "import"],
+            "next": ["export", "import"]
+          }
+        ]
       }
     },
     {

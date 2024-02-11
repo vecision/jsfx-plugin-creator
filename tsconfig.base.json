@@ -14,7 +14,11 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@jsfx-plugins-generator/*": ["apps/jsfx-plugins-generator/src/*"],
+      "@utils-common": ["libs/utils/common/src/index.ts"],
+      "@utils-common/server": ["libs/utils/common/src/server.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
