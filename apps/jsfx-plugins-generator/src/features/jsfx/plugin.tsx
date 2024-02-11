@@ -1,7 +1,12 @@
-import { Form, UseFormReturnType } from '@utils-common';
-import { UseFieldArrayReturn, useFieldArray } from 'react-hook-form';
+import { Form } from '@utils-common';
+import { saveAs } from 'file-saver';
+import { AnimatePresence } from 'framer-motion';
+import { UseFieldArrayReturn, UseFormReturn, useFieldArray } from 'react-hook-form';
 
-import { blockTemplate, jsfxPluginTemplate } from '@jsfx-plugins-generator/jsfx/plugin.template';
+import { Icon } from '@jsfx-plugins-generator/components/icon';
+import { Tooltip } from '@jsfx-plugins-generator/components/tooltip';
+
+import { blockTemplate, jsfxPluginTemplate } from '@jsfx-plugins-generator/features/jsfx/plugin.template';
 
 import styles from './plugin.module.scss';
 
@@ -59,14 +64,14 @@ const defaultValues: SliderFormValues = {
       defaultValue: 64,
       maxValue: 127,
       minValue: 0,
-      name: '',
+      name: 'Slider1',
       type: 'range',
     },
   ],
 };
 
 export const SliderForm = () => {
-  const form = Form.useForm<SliderFormValues>({ defaultValues });
+  const form = Form.useForm<SliderFormValues>({ defaultValues, persistKey: 'jsfx-plugin' });
 
   const fieldArray = useFieldArray({
     control: form.control, // control props comes from useForm (optional: if you are using FormContext)
@@ -86,7 +91,7 @@ export const SliderForm = () => {
     )
     .replace(
       /%SLIDERS%/,
-      form.watch('sliders').reduce((acc, slider, index) => {
+      form.watch('sliders')?.reduce((acc, slider, index) => {
         return `${acc}slider${index + 1}:${slider.defaultValue}<${slider.minValue},${slider.maxValue},1>${
           slider.name
         } (${slider.cc})\n`;
@@ -94,15 +99,49 @@ export const SliderForm = () => {
     )
     .replace(
       /%BLOCKS%/,
-      form.watch('sliders').reduce((acc, slider, index) => {
+      form.watch('sliders')?.reduce((acc, slider, index) => {
         return `${acc}${blockTemplate
           .replace(/%SLIDER_INDEX%/g, (index + 1).toString())
           .replace(/%SLIDER_CC%/g, slider.cc.toString())}\n`;
       }, '')
     );
+  const handleUploadPresetFromClipboard = () => {
+    navigator.clipboard.readText().then(text => {
+      try {
+        const data = JSON.parse(text);
+        form.reset(data);
+      } catch (error) {
+        console.error(error);
+      }
+    });
+  };
+
+  const handleDownloadPreset = () => {
+    const fileName = `${form.watch('name')}.jsfx`;
+
+    // Create a blob of the data
+    const fileToSave = new Blob([JSON.stringify(template)], {
+      type: 'application/json',
+    });
+
+    // Save the file
+    saveAs(fileToSave, fileName);
+  };
+
+  const handleDownloadPlugin = () => {
+    const fileName = `${form.watch('name')}.json`;
+
+    // Create a blob of the data
+    const fileToSave = new Blob([JSON.stringify(form.getValues())], {
+      type: 'application/json',
+    });
+
+    // Save the file
+    saveAs(fileToSave, fileName);
+  };
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className={styles.form}>
+    <Form onValid={onSubmit} form={form} className={styles.form}>
       <div className={styles.fields}>
         <fieldset className={styles.info}>
           <legend>Plugin information</legend>
@@ -112,11 +151,31 @@ export const SliderForm = () => {
           </label>
 
           <div className={styles.control}>
-            <button type="button">Upload</button>
+            <Tooltip content="Upload preset from clipboard">
+              <button type="button" onClick={handleUploadPresetFromClipboard}>
+                <Icon icon="CloudArrowUpIcon" />
+              </button>
+            </Tooltip>
+            <Tooltip content="Download preset">
+              <button type="button" onClick={handleDownloadPreset}>
+                <Icon icon="CloudArrowDownIcon" />
+              </button>
+            </Tooltip>
+            <Tooltip content="Clear">
+              <button
+                type="button"
+                onClick={() => {
+                  form.reset(defaultValues);
+                }}
+              >
+                <Icon icon="TrashIcon" />
+              </button>
+            </Tooltip>
           </div>
         </fieldset>
         <fieldset className={styles.sliders}>
           <legend>Sliders</legend>
+          <AnimatePresence></AnimatePresence>
           {fieldArray.fields.map((field, index) => (
             <SliderField
               key={field.id} // important to include key with field's id
@@ -147,7 +206,7 @@ export const SliderForm = () => {
         </pre>
       </div>
       {/* <input type="submit" /> */}
-    </form>
+    </Form>
   );
 };
 
@@ -161,7 +220,7 @@ export const SliderField = ({
   id?: string;
   value?: string;
   index: number;
-  form: UseFormReturnType<SliderFormValues, any>;
+  form: UseFormReturn<SliderFormValues, any, SliderFormValues>;
   fieldArray: UseFieldArrayReturn<SliderFormValues, 'sliders', 'id'>;
 }) => {
   return (
@@ -174,19 +233,35 @@ export const SliderField = ({
       />
 
       <div className={styles.control}>
-        <button type="button" disabled={index === 0} onClick={() => fieldArray.move(index, index - 1)}>
-          ↥
-        </button>
-        <button
-          type="button"
-          disabled={fieldArray.fields.length === index + 1}
-          onClick={() => fieldArray.move(index, index + 1)}
-        >
-          ↧
-        </button>
-        <button type="button" onClick={() => fieldArray.insert(index + 1, { ...sliderDefault, name: '' })}>
-          +
-        </button>
+        <Tooltip content="Move up">
+          <button type="button" disabled={index === 0} onClick={() => fieldArray.move(index, index - 1)}>
+            <Icon icon="ChevronUpIcon" />
+          </button>
+        </Tooltip>
+        <Tooltip content="Move down">
+          <button
+            type="button"
+            disabled={fieldArray.fields.length === index + 1}
+            onClick={() => fieldArray.move(index, index + 1)}
+          >
+            <Icon icon="ChevronDownIcon" />
+          </button>
+        </Tooltip>
+        <Tooltip content="Add slider">
+          <button
+            type="button"
+            onClick={() =>
+              fieldArray.insert(index + 1, { ...sliderDefault, name: `Slider${fieldArray.fields.length + 1}` })
+            }
+          >
+            <Icon icon="PlusIcon" />
+          </button>
+        </Tooltip>
+        <Tooltip content="Remove slider">
+          <button type="button" disabled={fieldArray.fields.length === 1} onClick={() => fieldArray.remove(index)}>
+            <Icon icon="MinusIcon" />
+          </button>
+        </Tooltip>
       </div>
     </div>
   );

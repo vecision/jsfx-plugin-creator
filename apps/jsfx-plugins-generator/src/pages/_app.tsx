@@ -1,7 +1,13 @@
 import { AppProps } from 'next/app';
+import dynamic from 'next/dynamic';
 import Head from 'next/head';
+
 import './global.scss';
-import { SliderForm } from 'apps/jsfx-plugins-generator/src/jsfx/plugin';
+
+const SliderForm = dynamic(() => import('@jsfx-plugins-generator/features/jsfx/plugin').then(mod => mod.SliderForm), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
 
 function CustomApp({ Component, pageProps }: AppProps) {
   return (

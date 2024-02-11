@@ -1,5 +1,6 @@
 export const jsfxPluginTemplate = `// Automatically generated the %DATE%
-// @author mthines (madsthines@gmail.com)
+// @band Kaiju (kaijurox@gmail.com) - listen https://ingrv.es/k2-h19-q
+// @author Mads Thines Coello
 // @version 1.1.0
 
 desc: %PLUGIN_NAME%

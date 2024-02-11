@@ -32,11 +32,6 @@ export const Form = <TFieldValues extends ReactHookForm.FieldValues = ReactHookF
   );
 };
 
-type DefaultValues<
-  TFieldValues extends ReactHookForm.FieldValues = ReactHookForm.FieldValues,
-  TContext = unknown
-> = NonNullable<Parameters<typeof ReactHookForm.useForm<TFieldValues, TContext, TFieldValues>>[0]>['defaultValues'];
-
 export type UseFormReturnType<
   TFieldValues extends ReactHookForm.FieldValues = ReactHookForm.FieldValues,
   TContext = unknown
@@ -56,7 +51,7 @@ export type UseFormReturnType<
   /**
    * The persisted values
    */
-  persistedValues: DefaultValues<TFieldValues, TContext> | undefined;
+  persistedValues: ReactHookForm.DefaultValues<TFieldValues> | undefined;
 };
 
 Form.useForm = <TFieldValues extends ReactHookForm.FieldValues = ReactHookForm.FieldValues, TContext = unknown>(
@@ -75,17 +70,27 @@ Form.useForm = <TFieldValues extends ReactHookForm.FieldValues = ReactHookForm.F
   /**
    * The form values persisted in browser storage
    */
-  const persistedValues = useMemo(() => {
+  const persistedValues = useMemo<ReactHookForm.DefaultValues<TFieldValues> | undefined>(() => {
     if (isServer || !persistKey) return;
 
-    return persistValues.get() as DefaultValues<TFieldValues, TContext>;
+    const persistedValues = persistValues.get() as ReactHookForm.DefaultValues<TFieldValues>;
+
+    const defaultValues: ReactHookForm.DefaultValues<TFieldValues> | undefined =
+      typeof config?.defaultValues === 'function'
+        ? ({} as ReactHookForm.DefaultValues<TFieldValues>)
+        : config?.defaultValues;
+
+    return {
+      ...defaultValues,
+      ...persistedValues,
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [persistKey]);
 
   const form = ReactHookForm.useForm<TFieldValues, TContext, TFieldValues>({
+    ...config,
     defaultValues: persistedValues,
     reValidateMode: 'onChange',
-    ...config,
   });
 
   const values = form.watch();
