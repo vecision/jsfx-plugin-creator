@@ -56,7 +56,10 @@
   --color-level-6: var(--color-neutral-14);
   --color-on-level-6: var(--color-neutral-0);
 
-  --color-primary-0: #111823;
+  --color-primary-rgb: 17, 24, 35;
+  --color-primary-0: rgb(var(--color-primary-rgb));
+  --color-primary-1: #{lighten(rgb(var(--color-primary-rgb)), 10%)};
+  --color-primary-2: #{lighten(rgb(var(--color-primary-rgb)), 20%)};
 
   // Borders
   --brs-tiny: 1px;

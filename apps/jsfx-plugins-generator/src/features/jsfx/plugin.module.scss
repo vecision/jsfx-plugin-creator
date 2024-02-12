@@ -18,6 +18,32 @@
   }
 }
 
+.helpers {
+  > span {
+    display: inline-block;
+    color: var(--color-neutral-6);
+    font-size: 14px;
+    margin-top: 1em;
+    padding: 1em;
+    border-radius: var(--brs-medium);
+    background: rgba(var(--color-on-level-rgb), 0.1);
+    align-items: center;
+  }
+
+  code {
+    background: rgba(var(--color-level-rgb), 0.3);
+    border-radius: var(--brs-small);
+    font-size: 12px;
+    display: inline-block;
+    padding: 0.1em 0.3em;
+    height: auto;
+
+    & + code {
+      margin-left: 0.5em;
+    }
+  }
+}
+
 .sliders {
   display: flex;
   flex-flow: column nowrap;

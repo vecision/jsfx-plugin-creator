@@ -1,7 +1,7 @@
 import { Form } from '@utils-common';
 import { saveAs } from 'file-saver';
-import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useRef } from 'react';
+import { AnimatePresence, MotionProps, motion } from 'framer-motion';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { UseFieldArrayReturn, UseFormReturn, useFieldArray } from 'react-hook-form';
 
 import { Icon } from '@jsfx-plugins-generator/components/icon';
@@ -44,10 +44,10 @@ export type SliderProps = {
 };
 
 export const sliderDefault: Omit<SliderProps, 'name'> = {
-  minValue: 0,
-  maxValue: 127,
-  defaultValue: 64,
-  cc: 1,
+  defaultValue: undefined,
+  maxValue: undefined,
+  minValue: undefined,
+  cc: undefined,
   type: 'range',
 };
 
@@ -62,20 +62,25 @@ const defaultValues: SliderFormValues = {
   sliders: [
     {
       ...sliderDefault,
-      cc: 1,
-      defaultValue: undefined,
-      maxValue: undefined,
-      minValue: undefined,
       name: 'Slider1',
       type: 'range',
     },
   ],
+};
+type Helpers = keyof SliderProps | 'pluginName';
+
+const helperAnimations: MotionProps = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.075 },
 };
 
 export const SliderForm = () => {
   const form = Form.useForm<SliderFormValues>({ defaultValues, persistKey: 'jsfx-plugin' });
   const timeout = useRef<number>();
   const toast = useToast();
+  const [helperIsHovered, setHelperIsHovered] = useState<Helpers | null>(null);
 
   const fieldArray = useFieldArray({
     control: form.control, // control props comes from useForm (optional: if you are using FormContext)
@@ -178,7 +183,16 @@ export const SliderForm = () => {
           <legend>Plugin information</legend>
           <label>
             Name
-            <input placeholder={'Plugin name'} className={styles.input} {...form?.register('name')} />
+            <input
+              placeholder={'Plugin name'}
+              className={styles.input}
+              {...form?.register('name')}
+              onFocus={() => setHelperIsHovered('pluginName')}
+              onBlur={e => {
+                form?.register(`name`).onBlur(e);
+                setHelperIsHovered(null);
+              }}
+            />
           </label>
 
           <div className={styles.control}>
@@ -214,11 +228,59 @@ export const SliderForm = () => {
                 index={index}
                 form={form}
                 fieldArray={fieldArray}
+                setHelperIsHovered={setHelperIsHovered}
                 {...field}
               />
             ))}
           </AnimatePresence>
         </fieldset>
+
+        <p className={styles.helpers}>
+          <AnimatePresence mode="wait">
+            {helperIsHovered === 'pluginName' && (
+              <motion.span key="pluginName" {...helperAnimations}>
+                The name of the Plugin
+                <br></br>
+                <code>@default {defaultValues.name}</code>
+              </motion.span>
+            )}
+            {helperIsHovered === 'name' && (
+              <motion.span key="name" {...helperAnimations}>
+                The name of the slider
+                <br></br>
+                <code>@default Slider + $index</code>
+              </motion.span>
+            )}
+            {helperIsHovered === 'cc' && (
+              <motion.span key="cc" {...helperAnimations}>
+                The <code>CC</code> value that will be used to send the <code>MIDI</code> data
+                <br></br>
+              </motion.span>
+            )}
+            {helperIsHovered === 'defaultValue' && (
+              <motion.span key="defaultValue" {...helperAnimations}>
+                The default value when resetting the <code>MIDI</code> controller
+                <br></br>
+              </motion.span>
+            )}
+            {helperIsHovered === 'maxValue' && (
+              <motion.span key="maxValue" {...helperAnimations}>
+                The max value of the <code>MIDI</code> controller. Set to <code>1</code> and it will operate as a
+                boolean switch
+                <code>true</code>
+                <code>/</code>
+                <code>false</code>
+                <br></br>
+              </motion.span>
+            )}
+            {helperIsHovered === 'minValue' && (
+              <motion.span key="minValue" {...helperAnimations}>
+                The min value of the <code>MIDI</code> controller
+                <br></br>
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </p>
       </div>
 
       <div className={styles.code}>
@@ -259,10 +321,12 @@ export const SliderField = ({
   index,
   form,
   fieldArray,
+  setHelperIsHovered,
 }: SliderProps & {
   id?: string;
   value?: string;
   index: number;
+  setHelperIsHovered: Dispatch<SetStateAction<Helpers | null>>;
   form: UseFormReturn<SliderFormValues, any, SliderFormValues>;
   fieldArray: UseFieldArrayReturn<SliderFormValues, 'sliders', 'id'>;
 }) => {
@@ -282,6 +346,11 @@ export const SliderField = ({
             placeholder={name || 'Slider name'}
             className={styles.input}
             {...form?.register(`sliders.${index}.name`)}
+            onFocus={() => setHelperIsHovered('name')}
+            onBlur={e => {
+              form?.register(`sliders.${index}.name`).onBlur(e);
+              setHelperIsHovered(null);
+            }}
           />
         </label>
         <label>
@@ -292,6 +361,11 @@ export const SliderField = ({
             className={styles.number}
             type="number"
             {...form?.register(`sliders.${index}.cc`)}
+            onFocus={() => setHelperIsHovered('cc')}
+            onBlur={e => {
+              form?.register(`sliders.${index}.cc`).onBlur(e);
+              setHelperIsHovered(null);
+            }}
           />
         </label>
         <label>
@@ -302,6 +376,11 @@ export const SliderField = ({
             className={styles.number}
             type="number"
             {...form?.register(`sliders.${index}.defaultValue`)}
+            onFocus={() => setHelperIsHovered('defaultValue')}
+            onBlur={e => {
+              form?.register(`sliders.${index}.defaultValue`).onBlur(e);
+              setHelperIsHovered(null);
+            }}
           />
         </label>
         <label>
@@ -312,6 +391,11 @@ export const SliderField = ({
             className={styles.number}
             type="number"
             {...form?.register(`sliders.${index}.minValue`)}
+            onFocus={() => setHelperIsHovered('minValue')}
+            onBlur={e => {
+              form?.register(`sliders.${index}.minValue`).onBlur(e);
+              setHelperIsHovered(null);
+            }}
           />
         </label>
         <label>
@@ -322,6 +406,11 @@ export const SliderField = ({
             className={styles.number}
             type="number"
             {...form?.register(`sliders.${index}.maxValue`)}
+            onFocus={() => setHelperIsHovered('maxValue')}
+            onBlur={e => {
+              form?.register(`sliders.${index}.maxValue`).onBlur(e);
+              setHelperIsHovered(null);
+            }}
           />
         </label>
       </div>
