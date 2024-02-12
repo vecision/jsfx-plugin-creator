@@ -1,0 +1,74 @@
+// Base styling
+.toast {
+  padding: 0;
+  color: var(--color-on-level-3);
+  font-family: var(--font-family-montserrat);
+  background: var(--color-level-5);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 20%);
+  height: auto;
+  min-height: 52px;
+
+  &.alert {
+    background: var(--color-alert);
+    color: var(--color-on-alert);
+  }
+  &.error {
+    background: var(--color-error);
+    color: var(--color-on-error);
+  }
+  &.success {
+    background: var(--color-success);
+    color: var(--color-on-success);
+  }
+
+  .body {
+    padding: 0;
+    height: auto;
+
+    > div {
+      display: flex;
+      flex-flow: row nowrap;
+
+      padding: var(--size-tiny);
+    }
+  }
+}
+.icon {
+  --_size: 24px;
+  width: var(--_size);
+  height: var(--_size);
+  margin-left: 0.5em;
+}
+
+.info {
+  display: grid;
+  flex: 1 1 auto;
+  grid-template-columns: auto 1fr;
+  gap: 0.5em;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25em;
+
+  .text {
+    display: flex;
+    flex-flow: column nowrap;
+
+    .title {
+      font-weight: var(--font-weight-bold);
+      font-size: 16px;
+    }
+
+    .message {
+      font-size: 12px;
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 0.25em;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+}

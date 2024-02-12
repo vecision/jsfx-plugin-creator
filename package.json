@@ -6,9 +6,11 @@
   "scripts": {},
   "dependencies": {
     "@heroicons/react": "^2.1.1",
+    "@hookform/resolvers": "^3.3.4",
     "@tippyjs/react": "^4.2.6",
     "@trivago/prettier-plugin-sort-imports": "3.4.0",
     "@types/file-saver": "^2.0.7",
+    "classnames": "^2.5.1",
     "eslint-plugin-unused-imports": "2.0.0",
     "file-saver": "^2.0.5",
     "framer-motion": "^11.0.3",
@@ -18,7 +20,9 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.49.3",
-    "tslib": "^2.3.0"
+    "react-toastify": "^10.0.4",
+    "tslib": "^2.3.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@nx/devkit": "17.3.0",

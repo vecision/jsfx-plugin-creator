@@ -1,27 +1,60 @@
 @use './reset.scss' as *;
+@use './form' as *;
 @use '~../utils/color-helpers' as *;
 
 :root {
-  --color-black: 0, 0, 0;
-  --color-white: 255, 255, 255;
+  --color-black-rgb: 0, 0, 0;
+  --color-white-rgb: 255, 255, 255;
 
-  --color-level: var(--color-black);
-  --color-on-level: var(--color-white);
+  --color-level-rgb: var(--color-black-rgb);
+  --color-on-level-rgb: var(--color-white-rgb);
 
-  --color-black-0: #{lighten(rgb(var(--color-black)), 0%)};
-  --color-white-0: #{darken(rgb(var(--color-white)), 0%)};
-  --color-black-1: #{lighten(rgb(var(--color-black)), 2.5%)};
-  --color-white-1: #{darken(rgb(var(--color-white)), 0%)};
-  --color-black-2: #{lighten(rgb(var(--color-black)), 5%)};
-  --color-white-2: #{darken(rgb(var(--color-white)), 0%)};
-  --color-black-3: #{lighten(rgb(var(--color-black)), 7.5%)};
-  --color-white-3: #{darken(rgb(var(--color-white)), 0%)};
-  --color-black-4: #{lighten(rgb(var(--color-black)), 10%)};
-  --color-white-4: #{darken(rgb(var(--color-white)), 0%)};
-  --color-black-5: #{lighten(rgb(var(--color-black)), 12.5%)};
-  --color-white-5: #{darken(rgb(var(--color-white)), 0%)};
-  --color-black-6: #{lighten(rgb(var(--color-black)), 15%)};
-  --color-white-6: #{darken(rgb(var(--color-white)), 0%)};
+  --color-neutral-0: #{darken(rgb(var(--color-on-level-rgb)), 0%)};
+  --color-neutral-1: #{darken(rgb(var(--color-on-level-rgb)), 5%)};
+  --color-neutral-2: #{darken(rgb(var(--color-on-level-rgb)), 10%)};
+  --color-neutral-3: #{darken(rgb(var(--color-on-level-rgb)), 15%)};
+  --color-neutral-4: #{darken(rgb(var(--color-on-level-rgb)), 20%)};
+  --color-neutral-5: #{darken(rgb(var(--color-on-level-rgb)), 25%)};
+  --color-neutral-6: #{darken(rgb(var(--color-on-level-rgb)), 30%)};
+  --color-neutral-7: #{darken(rgb(var(--color-on-level-rgb)), 35%)};
+  --color-neutral-8: #{darken(rgb(var(--color-on-level-rgb)), 40%)};
+  --color-neutral-9: #{darken(rgb(var(--color-on-level-rgb)), 45%)};
+  --color-neutral-10: #{lighten(rgb(var(--color-level-rgb)), 50%)};
+  --color-neutral-11: #{lighten(rgb(var(--color-level-rgb)), 45%)};
+  --color-neutral-12: #{lighten(rgb(var(--color-level-rgb)), 40%)};
+  --color-neutral-13: #{lighten(rgb(var(--color-level-rgb)), 35%)};
+  --color-neutral-14: #{lighten(rgb(var(--color-level-rgb)), 30%)};
+  --color-neutral-15: #{lighten(rgb(var(--color-level-rgb)), 25%)};
+  --color-neutral-16: #{lighten(rgb(var(--color-level-rgb)), 20%)};
+  --color-neutral-17: #{lighten(rgb(var(--color-level-rgb)), 15%)};
+  --color-neutral-18: #{lighten(rgb(var(--color-level-rgb)), 10%)};
+  --color-neutral-19: #{lighten(rgb(var(--color-level-rgb)), 5%)};
+  --color-neutral-20: #{lighten(rgb(var(--color-level-rgb)), 0%)};
+
+  // Status
+  --color-alert: rgb(57, 52, 4);
+  --color-on-alert: rgb(235, 230, 188);
+
+  --color-error: rgb(68, 25, 26);
+  --color-on-error: rgb(238, 204, 204);
+
+  --color-success: rgb(25, 68, 25);
+  --color-on-success: rgb(178, 230, 178);
+
+  --color-level-0: var(--color-neutral-20);
+  --color-on-level-0: var(--color-neutral-0);
+  --color-level-1: var(--color-neutral-19);
+  --color-on-level-1: var(--color-neutral-0);
+  --color-level-2: var(--color-neutral-18);
+  --color-on-level-2: var(--color-neutral-0);
+  --color-level-3: var(--color-neutral-17);
+  --color-on-level-3: var(--color-neutral-0);
+  --color-level-4: var(--color-neutral-16);
+  --color-on-level-4: var(--color-neutral-0);
+  --color-level-5: var(--color-neutral-15);
+  --color-on-level-5: var(--color-neutral-0);
+  --color-level-6: var(--color-neutral-14);
+  --color-on-level-6: var(--color-neutral-0);
 
   --color-primary-0: #111823;
 
@@ -29,8 +62,8 @@
   --brs-tiny: 1px;
   --brs-xsmall: 2px;
   --brs-small: 4px;
-  --brs-medium: 10px;
-  --brs-large: 20px;
+  --brs-medium: 8px;
+  --brs-large: 16px;
   --brs-full: 10000em;
   --brs-round: 50%;
 
@@ -44,42 +77,6 @@
 
 body {
   background: var(--color-primary-0);
-  color: var(--color-white-0);
+  color: var(--color-on-level-0);
   color-scheme: dark;
-}
-
-input {
-  background: inherit;
-  border: 1px solid rgba(var(--color-on-level), 0.2);
-  border-radius: var(--brs-small);
-  padding: 0.5em 0.75em;
-  font-size: 16px;
-  transition: border-color 0.1s ease-in-out;
-
-  &:focus-visible,
-  &:hover {
-    border-color: rgba(var(--color-on-level), 1);
-  }
-}
-
-fieldset {
-  padding: 0;
-  margin: 0;
-  margin-top: 2em;
-  border: 1px solid rgba(var(--color-on-level), 0.2);
-  padding: 1em;
-  padding-block-start: 0.3em;
-
-  legend {
-    padding: 0 0.5em;
-    font-size: 24px;
-    font-weight: bold;
-  }
-}
-
-label {
-  display: inline-flex;
-  flex-flow: column wrap;
-  font-size: 16px;
-  font-weight: bold;
 }

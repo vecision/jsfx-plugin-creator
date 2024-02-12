@@ -1,9 +1,11 @@
 import { Form } from '@utils-common';
 import { saveAs } from 'file-saver';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useRef } from 'react';
 import { UseFieldArrayReturn, UseFormReturn, useFieldArray } from 'react-hook-form';
 
 import { Icon } from '@jsfx-plugins-generator/components/icon';
+import { useToast } from '@jsfx-plugins-generator/components/toast/toast';
 import { Tooltip } from '@jsfx-plugins-generator/components/tooltip';
 
 import { blockTemplate, jsfxPluginTemplate } from '@jsfx-plugins-generator/features/jsfx/plugin.template';
@@ -15,22 +17,22 @@ export type SliderProps = {
    * min: 0
    * max: 127
    */
-  minValue: 0;
+  minValue: number | undefined;
   /**
    * min: 0
    * max: 127
    */
-  maxValue: 127;
+  maxValue: number | undefined;
   /**
    * min: 0
    * max: 127
    */
-  defaultValue: 64;
+  defaultValue: number | undefined;
   /**
    * min: 0
    * max: 127
    */
-  cc: 1;
+  cc: number | undefined;
   /**
    * The name of the Slider
    */
@@ -61,9 +63,9 @@ const defaultValues: SliderFormValues = {
     {
       ...sliderDefault,
       cc: 1,
-      defaultValue: 64,
-      maxValue: 127,
-      minValue: 0,
+      defaultValue: undefined,
+      maxValue: undefined,
+      minValue: undefined,
       name: 'Slider1',
       type: 'range',
     },
@@ -72,6 +74,8 @@ const defaultValues: SliderFormValues = {
 
 export const SliderForm = () => {
   const form = Form.useForm<SliderFormValues>({ defaultValues, persistKey: 'jsfx-plugin' });
+  const timeout = useRef<number>();
+  const toast = useToast();
 
   const fieldArray = useFieldArray({
     control: form.control, // control props comes from useForm (optional: if you are using FormContext)
@@ -80,6 +84,21 @@ export const SliderForm = () => {
 
   const onSubmit = (data: SliderFormValues) => console.log(data);
 
+  // If the user manages to delete all sliders - add one back
+  useEffect(() => {
+    if (fieldArray.fields.length === 0) {
+      timeout.current = window.setTimeout(() => {
+        fieldArray.append({ ...sliderDefault, name: 'Slider1' });
+      }, 200);
+    }
+
+    return () => {
+      window.clearTimeout(timeout.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fieldArray?.fields?.length]);
+
+  // The template for the JSFX plugin
   const template = jsfxPluginTemplate
     .replace(/%PLUGIN_NAME%/, form.watch('name'))
     .replace(
@@ -102,25 +121,37 @@ export const SliderForm = () => {
       form.watch('sliders')?.reduce((acc, slider, index) => {
         return `${acc}${blockTemplate
           .replace(/%SLIDER_INDEX%/g, (index + 1).toString())
-          .replace(/%SLIDER_CC%/g, slider.cc.toString())}\n`;
+          .replace(/%SLIDER_CC%/g, (slider?.cc || 1)?.toString())}\n`;
       }, '')
     );
+
   const handleUploadPresetFromClipboard = () => {
     navigator.clipboard.readText().then(text => {
       try {
         const data = JSON.parse(text);
+
         form.reset(data);
+
+        toast.info({
+          title: 'Upload successful',
+        });
       } catch (error) {
-        console.error(error);
+        if (error) {
+          toast.error({
+            title: 'Error',
+            message:
+              'Invalid JSON. Make sure that the preset in your clipboard is valid. Note that you can not upload a *.jsfx plugin - it needs to be the preset',
+          });
+        }
       }
     });
   };
 
   const handleDownloadPreset = () => {
-    const fileName = `${form.watch('name')}.jsfx`;
+    const fileName = `${form.watch('name')}.json`;
 
     // Create a blob of the data
-    const fileToSave = new Blob([JSON.stringify(template)], {
+    const fileToSave = new Blob([JSON.stringify(form.getValues())], {
       type: 'application/json',
     });
 
@@ -129,10 +160,10 @@ export const SliderForm = () => {
   };
 
   const handleDownloadPlugin = () => {
-    const fileName = `${form.watch('name')}.json`;
+    const fileName = `${form.watch('name')}.jsfx`;
 
     // Create a blob of the data
-    const fileToSave = new Blob([JSON.stringify(form.getValues())], {
+    const fileToSave = new Blob([JSON.stringify(template)], {
       type: 'application/json',
     });
 
@@ -152,18 +183,19 @@ export const SliderForm = () => {
 
           <div className={styles.control}>
             <Tooltip content="Upload preset from clipboard">
-              <button type="button" onClick={handleUploadPresetFromClipboard}>
+              <button type="button" onClick={handleUploadPresetFromClipboard} data-icon>
                 <Icon icon="CloudArrowUpIcon" />
               </button>
             </Tooltip>
             <Tooltip content="Download preset">
-              <button type="button" onClick={handleDownloadPreset}>
+              <button type="button" onClick={handleDownloadPreset} data-icon>
                 <Icon icon="CloudArrowDownIcon" />
               </button>
             </Tooltip>
             <Tooltip content="Clear">
               <button
                 type="button"
+                data-icon
                 onClick={() => {
                   form.reset(defaultValues);
                 }}
@@ -175,21 +207,29 @@ export const SliderForm = () => {
         </fieldset>
         <fieldset className={styles.sliders}>
           <legend>Sliders</legend>
-          <AnimatePresence></AnimatePresence>
-          {fieldArray.fields.map((field, index) => (
-            <SliderField
-              key={field.id} // important to include key with field's id
-              index={index}
-              form={form}
-              fieldArray={fieldArray}
-              {...field}
-            />
-          ))}
+          <AnimatePresence>
+            {fieldArray.fields.map((field, index) => (
+              <SliderField
+                key={field.id} // important to include key with field's id
+                index={index}
+                form={form}
+                fieldArray={fieldArray}
+                {...field}
+              />
+            ))}
+          </AnimatePresence>
         </fieldset>
       </div>
 
       <div className={styles.code}>
         <h3>Click the code block to copy</h3>
+
+        <Tooltip content="Download plugin">
+          <button type="button" onClick={handleDownloadPlugin} className={styles.download}>
+            <Icon icon="DocumentArrowDownIcon" />
+          </button>
+        </Tooltip>
+
         <pre
           className={styles.pre}
           onClick={event => {
@@ -200,12 +240,15 @@ export const SliderForm = () => {
             }
 
             navigator.clipboard.writeText(textContent);
+
+            toast.success({
+              title: 'Copied to clipboard',
+            });
           }}
         >
           {template}
         </pre>
       </div>
-      {/* <input type="submit" /> */}
     </Form>
   );
 };
@@ -224,22 +267,73 @@ export const SliderField = ({
   fieldArray: UseFieldArrayReturn<SliderFormValues, 'sliders', 'id'>;
 }) => {
   return (
-    <div className={styles.slider}>
-      <input
-        key={id} // important to include key with field's id
-        placeholder={name || 'Slider name'}
-        className={styles.input}
-        {...form?.register(`sliders.${index}.name`)}
-      />
-
+    <motion.div
+      transition={{ duration: 0.15 }}
+      initial={{ opacity: 0, x: -8 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 8 }}
+      className={styles.slider}
+    >
+      <div className={styles.inputs}>
+        <label>
+          Name
+          <input
+            key={id}
+            placeholder={name || 'Slider name'}
+            className={styles.input}
+            {...form?.register(`sliders.${index}.name`)}
+          />
+        </label>
+        <label>
+          CC Value
+          <input
+            key={id}
+            placeholder={'1'}
+            className={styles.number}
+            type="number"
+            {...form?.register(`sliders.${index}.cc`)}
+          />
+        </label>
+        <label>
+          Default Value
+          <input
+            key={id}
+            placeholder={'64'}
+            className={styles.number}
+            type="number"
+            {...form?.register(`sliders.${index}.defaultValue`)}
+          />
+        </label>
+        <label>
+          Min Value
+          <input
+            key={id}
+            placeholder={'0'}
+            className={styles.number}
+            type="number"
+            {...form?.register(`sliders.${index}.minValue`)}
+          />
+        </label>
+        <label>
+          Max Value
+          <input
+            key={id}
+            placeholder={'127'}
+            className={styles.number}
+            type="number"
+            {...form?.register(`sliders.${index}.maxValue`)}
+          />
+        </label>
+      </div>
       <div className={styles.control}>
         <Tooltip content="Move up">
-          <button type="button" disabled={index === 0} onClick={() => fieldArray.move(index, index - 1)}>
+          <button data-icon type="button" disabled={index === 0} onClick={() => fieldArray.move(index, index - 1)}>
             <Icon icon="ChevronUpIcon" />
           </button>
         </Tooltip>
         <Tooltip content="Move down">
           <button
+            data-icon
             type="button"
             disabled={fieldArray.fields.length === index + 1}
             onClick={() => fieldArray.move(index, index + 1)}
@@ -249,6 +343,7 @@ export const SliderField = ({
         </Tooltip>
         <Tooltip content="Add slider">
           <button
+            data-icon
             type="button"
             onClick={() =>
               fieldArray.insert(index + 1, { ...sliderDefault, name: `Slider${fieldArray.fields.length + 1}` })
@@ -258,11 +353,22 @@ export const SliderField = ({
           </button>
         </Tooltip>
         <Tooltip content="Remove slider">
-          <button type="button" disabled={fieldArray.fields.length === 1} onClick={() => fieldArray.remove(index)}>
+          <button
+            data-icon
+            type="button"
+            disabled={fieldArray.fields.length === 1}
+            onClick={() => {
+              if (fieldArray.fields.length === 1) {
+                return;
+              }
+
+              return fieldArray.remove(index);
+            }}
+          >
             <Icon icon="MinusIcon" />
           </button>
         </Tooltip>
       </div>
-    </div>
+    </motion.div>
   );
 };

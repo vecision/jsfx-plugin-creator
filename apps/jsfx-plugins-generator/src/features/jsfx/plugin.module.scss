@@ -1,7 +1,7 @@
 .form {
   display: grid;
-  margin: 1em;
   gap: 1em;
+  margin: 1em;
 
   @media (min-width: 900px) {
     grid-template-columns: 1fr clamp(300px, 40svw, 700px);
@@ -11,65 +11,116 @@
 .info {
   display: flex;
   flex-flow: row wrap;
+
+  .control {
+    margin-left: auto;
+    align-items: center;
+  }
 }
 
 .sliders {
   display: flex;
   flex-flow: column nowrap;
+  container-type: inline-size;
+  padding: 0.5em;
+  gap: 1em;
 }
 
 .slider {
   display: flex;
-  flex-flow: row nowrap;
   padding: 0.5em;
   border-radius: var(--brs-medium);
   transition: background var(--trs-instant);
+  flex-flow: row wrap;
+  gap: 1em;
+  position: relative;
+
+  &:not(:first-of-type) {
+    &::before {
+      content: '';
+      display: inline-block;
+      position: absolute;
+      left: 0;
+      top: -0.5em;
+      margin: 0 0.5em;
+      width: calc(100% - 1em);
+      height: 1px;
+      background: rgba(var(--color-on-level-rgb), 0.1);
+      border-radius: var(--brs-tiny);
+    }
+  }
+
+  @container (min-width: 800px) {
+    .control {
+      margin-left: auto;
+      align-items: center;
+    }
+  }
 
   &:hover,
   &:focus-within,
   &:focus-visible {
-    background: #{rgba(var(--color-on-level), 0.1)};
+    background: #{rgba(var(--color-on-level-rgb), 0.05)};
+  }
+
+  .inputs {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 1em;
+
+    .number {
+      width: 80px;
+    }
+
+    label {
+      font-size: 10px;
+      color: var(--color-neutral-8);
+      transition: color var(--trs-quick);
+
+      &:focus-within,
+      &:hover {
+        color: var(--color-neutral-0);
+      }
+    }
   }
 }
 
 .control {
-  margin-left: auto;
   display: flex;
   flex-flow: row nowrap;
   gap: 0.5em;
-
-  button {
-    --_size: 30px;
-    width: var(--_size);
-    height: var(--_size);
-    background: #{rgba(var(--color-on-level), 0.3)};
-    color: var(--color-on-level);
-    border-radius: 50%;
-    transition: scale var(--trs-instant);
-    box-shadow: 0 0 10px transparent;
-
-    &:not([disabled]) {
-      cursor: pointer;
-    }
-
-    &[disabled] {
-      cursor: not-allowed;
-      background: #{rgba(var(--color-on-level), 0.15)};
-    }
-
-    &:hover,
-    &:focus-visible {
-      scale: 1.2;
-    }
-  }
 }
 
-.pre {
-  font-size: 14px;
-  background: rgba(var(--color-black), 0.2);
-  padding: 1.5em;
-  overflow: auto;
-  height: 85svh;
-  border-radius: var(--brs-large);
-  cursor: url('/assets/copy-paste.png'), auto;
+.code {
+  position: relative;
+
+  &:hover {
+    .download {
+      scale: 1.4;
+    }
+  }
+
+  .pre {
+    font-size: 14px;
+    background: rgba(var(--color-black), 0.2);
+    padding: 1.5em;
+    overflow: auto;
+    height: 85svh;
+    max-width: 100svw;
+    white-space: break-spaces;
+
+    border-radius: var(--brs-large);
+    cursor: url('/assets/copy-paste.png'), auto;
+  }
+
+  .download {
+    transition: scale var(--trs-instant);
+    position: absolute;
+    right: 1em;
+    top: 1em;
+    width: 30px;
+    height: 30px;
+    border-radius: var(--brs-round);
+    scale: 1.2;
+  }
 }
