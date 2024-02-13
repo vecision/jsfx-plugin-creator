@@ -1,7 +1,7 @@
 {
   "root": true,
   "ignorePatterns": ["**/*"],
-  "plugins": ["@nx", "unused-imports"],
+  "plugins": ["@nx", "unused-imports", "simple-import-sort"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
@@ -31,7 +31,6 @@
         "object-curly-newline": 0,
         "operator-linebreak": 0,
         "padded-blocks": [1, { "blocks": "never" }],
-        "no-unused-vars": "off",
         "no-extra-parens": "off",
         "no-useless-escape": "off",
         "no-empty": "warn",
@@ -77,7 +76,28 @@
             "prev": ["export", "import"],
             "next": ["export", "import"]
           }
-        ]
+        ],
+        "simple-import-sort/imports": [
+          "warn",
+          {
+            "groups": [
+              ["^"],
+              ["^@jsfx-plugins-generator/api/(.*)$"],
+              ["^@jsfx-plugins-generator/components/(.*)$"],
+              ["^@jsfx-plugins-generator/utils/(.*)$"],
+              ["^@jsfx-plugins-generator/pages/(.*)$"],
+              ["^@jsfx-plugins-generator/services/(.*)$"],
+              ["^@jsfx-plugins-generator/features/(.*)$"],
+              ["^@jsfx-plugins-generator/theme/(.*)$"],
+              ["^@jsfx-plugins-generator/(.*)$"],
+              ["^(../|./)(.*)?(?<!.module.scss)$", "^(.*).module.scss$", "^(../|./)(.*)?(?<!.scss)$", "^(.*).scss$"],
+              ["^(.*).module.scss$"],
+              ["^\\."]
+            ]
+          }
+        ],
+        "simple-import-sort/exports": "warn",
+        "no-unused-vars": "off"
       }
     },
     {

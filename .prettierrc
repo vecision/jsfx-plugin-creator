@@ -2,20 +2,6 @@
   "singleQuote": true,
   "semi": true,
   "printWidth": 120,
-  "plugins": ["@trivago/prettier-plugin-sort-imports", "prettier-plugin-packagejson"],
-  "importOrder": [
-    "^@jsfx-plugins-generator/api/(.*)$",
-    "^@jsfx-plugins-generator/components/(.*)$",
-    "^@jsfx-plugins-generator/utils/(.*)$",
-    "^@jsfx-plugins-generator/pages/(.*)$",
-    "^@jsfx-plugins-generator/services/(.*)$",
-    "^@jsfx-plugins-generator/features/(.*)$",
-    "^@jsfx-plugins-generator/theme/(.*)$",
-    "^@jsfx-plugins-generator/(.*)$",
-    "^(../|./)(.*)?(?<!.module.scss)$",
-    "^(.*).module.scss$"
-  ],
-  "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true,
+  "plugins": ["prettier-plugin-packagejson"],
   "arrowParens": "avoid"
 }
