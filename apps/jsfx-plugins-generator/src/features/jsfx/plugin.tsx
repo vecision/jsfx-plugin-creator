@@ -1,8 +1,9 @@
+'use client';
 import { Form } from '@utils-common';
 import { saveAs } from 'file-saver';
-import { AnimatePresence, MotionProps, motion } from 'framer-motion';
+import { AnimatePresence, motion, MotionProps } from 'framer-motion';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import { UseFieldArrayReturn, UseFormReturn, useFieldArray } from 'react-hook-form';
+import { useFieldArray, UseFieldArrayReturn, UseFormReturn } from 'react-hook-form';
 
 import { Icon } from '@jsfx-plugins-generator/components/icon';
 import { useToast } from '@jsfx-plugins-generator/components/toast/toast';
@@ -24,8 +25,7 @@ export type SliderProps = {
    */
   maxValue: number | undefined;
   /**
-   * min: 0
-   * max: 127
+   * @default 64
    */
   defaultValue: number | undefined;
   /**
@@ -44,9 +44,9 @@ export type SliderProps = {
 };
 
 export const sliderDefault: Omit<SliderProps, 'name'> = {
-  defaultValue: undefined,
-  maxValue: undefined,
-  minValue: undefined,
+  defaultValue: 64,
+  maxValue: 127,
+  minValue: 0,
   cc: undefined,
   type: 'range',
 };

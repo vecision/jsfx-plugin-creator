@@ -1,7 +1,7 @@
+import 'react-toastify/dist/ReactToastify.css';
 import cn from 'classnames';
 import { ReactNode } from 'react';
-import { ToastContainer, ToastOptions, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer, ToastOptions } from 'react-toastify';
 
 import { Icon, IconProps } from '@jsfx-plugins-generator/components/icon';
 

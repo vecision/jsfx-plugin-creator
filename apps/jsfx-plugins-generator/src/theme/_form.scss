@@ -1,6 +1,6 @@
 input {
   background: inherit;
-  border: 1px solid rgba(var(--color-on-level-rgb), 0.2);
+  border: 1px solid rgba(var(--color-text-rgb), 0.2);
   border-radius: var(--brs-small);
   padding: 0.5em 0.75em;
   font-size: 16px;
@@ -8,14 +8,14 @@ input {
 
   &:focus-visible,
   &:hover {
-    border-color: rgba(var(--color-on-level-rgb), 1);
+    border-color: rgba(var(--color-text-rgb), 1);
   }
 }
 
 fieldset {
   padding: 0;
   margin: 0;
-  border: 1px solid rgba(var(--color-on-level-rgb), 0.2);
+  border: 1px solid rgba(var(--color-text-rgb), 0.2);
   padding: 1em;
   padding-block-start: 0.3em;
   width: 100%;
@@ -38,8 +38,8 @@ button[data-icon] {
   --_size: 30px;
   width: var(--_size);
   height: var(--_size);
-  background: #{rgba(var(--color-on-level-rgb), 0.3)};
-  color: var(--color-on-level-rgb);
+  background: #{rgba(var(--color-text-rgb), 0.3)};
+  color: var(--color-text-rgb);
   border-radius: 50%;
   transition: scale var(--trs-instant);
   box-shadow: 0 0 10px transparent;
@@ -50,7 +50,7 @@ button[data-icon] {
 
   &[disabled] {
     cursor: not-allowed;
-    background: #{rgba(var(--color-on-level-rgb), 0.15)};
+    background: #{rgba(var(--color-text-rgb), 0.15)};
   }
 
   &:hover,

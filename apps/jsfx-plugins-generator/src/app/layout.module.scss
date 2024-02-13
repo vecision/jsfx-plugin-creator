@@ -1,0 +1,20 @@
+.dark {
+  &.dark {
+    --color-bg-rgb: var(--color-black-rgb);
+    --color-text-rgb: var(--color-white-rgb);
+  }
+  background: var(--color-primary-0);
+  color: var(--color-text-0);
+  color-scheme: dark;
+}
+
+.light {
+  &.light {
+    --color-bg-rgb: var(--color-white-rgb);
+    --color-text-rgb: var(--color-black-rgb);
+  }
+
+  background: var(--color-bg-0);
+  color: var(--color-text-0);
+  color-scheme: light;
+}

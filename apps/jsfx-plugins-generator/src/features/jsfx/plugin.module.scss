@@ -21,17 +21,17 @@
 .helpers {
   > span {
     display: inline-block;
-    color: var(--color-neutral-6);
+    color: var(--color-text-5);
     font-size: 14px;
     margin-top: 1em;
     padding: 1em;
     border-radius: var(--brs-medium);
-    background: rgba(var(--color-on-level-rgb), 0.1);
+    background: var(--color-bg-2);
     align-items: center;
   }
 
   code {
-    background: rgba(var(--color-level-rgb), 0.3);
+    background: var(--color-bg-2);
     border-radius: var(--brs-small);
     font-size: 12px;
     display: inline-block;
@@ -71,7 +71,7 @@
       margin: 0 0.5em;
       width: calc(100% - 1em);
       height: 1px;
-      background: rgba(var(--color-on-level-rgb), 0.1);
+      background: var(--color-bg-2);
       border-radius: var(--brs-tiny);
     }
   }
@@ -86,7 +86,7 @@
   &:hover,
   &:focus-within,
   &:focus-visible {
-    background: #{rgba(var(--color-on-level-rgb), 0.05)};
+    background: var(--color-bg-1);
   }
 
   .inputs {
@@ -100,12 +100,12 @@
 
     label {
       font-size: 10px;
-      color: var(--color-neutral-8);
+      color: var(--color-text-6);
       transition: color var(--trs-quick);
 
       &:focus-within,
       &:hover {
-        color: var(--color-neutral-0);
+        color: var(--color-text-0);
       }
     }
   }
@@ -121,6 +121,9 @@
   position: relative;
 
   &:hover {
+    .pre {
+      color: var(--color-text-3);
+    }
     .download {
       scale: 1.4;
     }
@@ -128,14 +131,15 @@
 
   .pre {
     font-size: 14px;
-    background: rgba(var(--color-level-rgb), 0.2);
+    background: var(--color-bg-1);
+    color: var(--color-text-6);
     padding: 1.5em;
     overflow: auto;
     height: 85svh;
     max-width: 100svw;
     white-space: break-spaces;
-
     border-radius: var(--brs-large);
+    transition: color var(--trs-quick);
     cursor: url('/assets/copy-paste.png'), auto;
   }
 
