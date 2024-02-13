@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useMemo, useTransition } from 'react';
+import { ReactNode, useEffect, useState, useTransition } from 'react';
 import * as ReactHookForm from 'react-hook-form';
 
 import { useMemoKey } from './hooks';
@@ -11,7 +11,7 @@ export type FormProps<
 > = {
   className?: string;
   children: ReactNode;
-  onValid: ReactHookForm.SubmitHandler<TFieldValues>;
+  onValid?: ReactHookForm.SubmitHandler<TFieldValues>;
   onInvalid?: ReactHookForm.SubmitErrorHandler<TFieldValues>;
   form: UseFormReturnType<TFieldValues, TContext>;
   id?: string;
@@ -26,7 +26,17 @@ export const Form = <TFieldValues extends ReactHookForm.FieldValues = ReactHookF
   id,
 }: FormProps<TFieldValues, TContext>) => {
   return (
-    <form id={id} className={className} onSubmit={form.handleSubmit(onValid, onInvalid)}>
+    <form
+      id={id}
+      className={className}
+      onSubmit={event => {
+        if (!onValid) {
+          return;
+        }
+
+        form.handleSubmit(onValid, onInvalid)(event);
+      }}
+    >
       {children}
     </form>
   );
@@ -49,9 +59,9 @@ export type UseFormReturnType<
    */
   isPending: boolean;
   /**
-   * The persisted values
+   * Whether the default values have been initialized
    */
-  persistedValues: ReactHookForm.DefaultValues<TFieldValues> | undefined;
+  isInitialized: boolean;
 };
 
 Form.useForm = <TFieldValues extends ReactHookForm.FieldValues = ReactHookForm.FieldValues, TContext = unknown>(
@@ -64,32 +74,30 @@ Form.useForm = <TFieldValues extends ReactHookForm.FieldValues = ReactHookForm.F
   } & ReactHookForm.UseFormProps<TFieldValues, TContext>
 ): UseFormReturnType<TFieldValues, TContext> => {
   const [isPending, startTransition] = useTransition();
-  const persistKey = config?.persistKey ? `${config?.persistKeyPrefix || 'form.'}${config?.persistKey}` : undefined;
+  const persistKey = config?.persistKey ? `${config?.persistKeyPrefix ?? 'form.'}${config?.persistKey}` : undefined;
   const persistValues = persist.session<TFieldValues>(persistKey);
-
-  /**
-   * The form values persisted in browser storage
-   */
-  const persistedValues = useMemo<ReactHookForm.DefaultValues<TFieldValues> | undefined>(() => {
-    if (isServer || !persistKey) return;
-
-    const persistedValues = persistValues.get() as ReactHookForm.DefaultValues<TFieldValues>;
-
-    const defaultValues: ReactHookForm.DefaultValues<TFieldValues> | undefined =
-      typeof config?.defaultValues === 'function'
-        ? ({} as ReactHookForm.DefaultValues<TFieldValues>)
-        : config?.defaultValues;
-
-    return {
-      ...defaultValues,
-      ...persistedValues,
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [persistKey]);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const form = ReactHookForm.useForm<TFieldValues, TContext, TFieldValues>({
     ...config,
-    defaultValues: persistedValues,
+    defaultValues: async (...args) => {
+      const persistedValues = persistValues.get() as ReactHookForm.DefaultValues<TFieldValues>;
+      let defaultValues: ReactHookForm.DefaultValues<TFieldValues> | undefined =
+        config?.defaultValues as ReactHookForm.DefaultValues<TFieldValues>;
+
+      if (typeof config?.defaultValues === 'function') {
+        defaultValues = (await (config?.defaultValues as (...p: unknown[]) => Promise<TFieldValues | undefined>)?.(
+          ...args
+        )) as typeof defaultValues;
+      }
+
+      setIsInitialized(true);
+
+      return {
+        ...defaultValues,
+        ...persistedValues,
+      } as TFieldValues;
+    },
     reValidateMode: 'onChange',
   });
 
@@ -134,5 +142,5 @@ Form.useForm = <TFieldValues extends ReactHookForm.FieldValues = ReactHookForm.F
     });
   };
 
-  return { ...form, removePersistedValues, clear, isPending, persistedValues };
+  return { ...form, removePersistedValues, clear, isPending, isInitialized };
 };

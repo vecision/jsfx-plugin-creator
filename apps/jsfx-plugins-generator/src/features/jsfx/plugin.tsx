@@ -1,47 +1,57 @@
 'use client';
-import { Form } from '@utils-common';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form, getMinMaxAttributesFromChecks } from '@utils-common';
 import { saveAs } from 'file-saver';
-import { AnimatePresence, motion, MotionProps } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useFieldArray, UseFieldArrayReturn, UseFormReturn } from 'react-hook-form';
+import { z } from 'zod';
 
 import { Icon } from '@jsfx-plugins-generator/components/icon';
 import { useToast } from '@jsfx-plugins-generator/components/toast/toast';
 import { Tooltip } from '@jsfx-plugins-generator/components/tooltip';
 
+import { fadeInOut } from '@jsfx-plugins-generator/utils/animations';
+
 import { blockTemplate, jsfxPluginTemplate } from '@jsfx-plugins-generator/features/jsfx/plugin.template';
 
 import styles from './plugin.module.scss';
 
-export type SliderProps = {
-  /**
-   * min: 0
-   * max: 127
-   */
-  minValue: number | undefined;
-  /**
-   * min: 0
-   * max: 127
-   */
-  maxValue: number | undefined;
-  /**
-   * @default 64
-   */
-  defaultValue: number | undefined;
-  /**
-   * min: 0
-   * max: 127
-   */
-  cc: number | undefined;
+const SliderSchema = z.object({
+  name: z.string(),
+  defaultValue: z.number().max(127).min(0).default(64).optional(),
+  maxValue: z.number().max(127).min(0).default(127).optional(),
+  minValue: z.number().max(127).min(0).default(0).optional(),
+  cc: z
+    .number()
+    .max(127)
+    .min(0)
+    .refine(value => {
+      console.log('#87', value);
+    })
+    .optional(),
+  type: z
+    .string()
+    .default('range')
+    .refine(value => {
+      if (value === 'range' || value === 'toggle') return true;
+    })
+    .optional(),
+});
+type SliderSchemaType = z.infer<typeof SliderSchema>;
+
+const FormSchema = z.object({
   /**
    * The name of the Slider
    */
-  name: string;
-  /**
-   * Whether it should act as a boolean (switch), and a range
-   */
-  type: 'switch' | 'range';
-};
+  name: z.string(),
+  useChannels: z.boolean(),
+  sliders: z.array(SliderSchema),
+});
+
+type FormSchemaType = z.infer<typeof FormSchema>;
+
+type SliderProps = FormSchemaType['sliders'][0];
 
 export const sliderDefault: Omit<SliderProps, 'name'> = {
   defaultValue: 64,
@@ -51,14 +61,9 @@ export const sliderDefault: Omit<SliderProps, 'name'> = {
   type: 'range',
 };
 
-type SliderFormValues = {
-  name: string;
-  useChannels?: boolean; // TODO
-  sliders: (SliderProps & { value?: string })[];
-};
-
-const defaultValues: SliderFormValues = {
+const defaultValues: FormSchemaType = {
   name: 'My Plugin',
+  useChannels: true,
   sliders: [
     {
       ...sliderDefault,
@@ -67,27 +72,24 @@ const defaultValues: SliderFormValues = {
     },
   ],
 };
-type Helpers = keyof SliderProps | 'pluginName';
 
-const helperAnimations: MotionProps = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
-  transition: { duration: 0.075 },
-};
+type Helpers = keyof FormSchemaType['sliders'][0] | 'pluginName';
 
 export const SliderForm = () => {
-  const form = Form.useForm<SliderFormValues>({ defaultValues, persistKey: 'jsfx-plugin' });
   const timeout = useRef<number>();
   const toast = useToast();
   const [helperIsHovered, setHelperIsHovered] = useState<Helpers | null>(null);
+
+  const form = Form.useForm<FormSchemaType>({
+    defaultValues,
+    persistKey: 'jsfx-plugin',
+    resolver: zodResolver(FormSchema),
+  });
 
   const fieldArray = useFieldArray({
     control: form.control, // control props comes from useForm (optional: if you are using FormContext)
     name: 'sliders', // unique name for your Field Array,
   });
-
-  const onSubmit = (data: SliderFormValues) => console.log(data);
 
   // If the user manages to delete all sliders - add one back
   useEffect(() => {
@@ -104,7 +106,7 @@ export const SliderForm = () => {
   }, [fieldArray?.fields?.length]);
 
   // The template for the JSFX plugin
-  const template = jsfxPluginTemplate
+  const codeTemplate = jsfxPluginTemplate
     .replace(/%PLUGIN_NAME%/, form.watch('name'))
     .replace(
       /%DATE%/,
@@ -168,7 +170,7 @@ export const SliderForm = () => {
     const fileName = `${form.watch('name')}.jsfx`;
 
     // Create a blob of the data
-    const fileToSave = new Blob([JSON.stringify(template)], {
+    const fileToSave = new Blob([JSON.stringify(codeTemplate)], {
       type: 'application/json',
     });
 
@@ -177,14 +179,14 @@ export const SliderForm = () => {
   };
 
   return (
-    <Form onValid={onSubmit} form={form} className={styles.form}>
+    <Form form={form} className={styles.form}>
       <div className={styles.fields}>
         <fieldset className={styles.info}>
           <legend>Plugin information</legend>
           <label>
             Name
             <input
-              placeholder={'Plugin name'}
+              placeholder={form.isInitialized ? 'Plugin name' : 'Loading...'}
               className={styles.input}
               {...form?.register('name')}
               onFocus={() => setHelperIsHovered('pluginName')}
@@ -238,33 +240,33 @@ export const SliderForm = () => {
         <p className={styles.helpers}>
           <AnimatePresence mode="wait">
             {helperIsHovered === 'pluginName' && (
-              <motion.span key="pluginName" {...helperAnimations}>
+              <motion.span key="pluginName" {...fadeInOut}>
                 The name of the Plugin
                 <br></br>
                 <code>@default {defaultValues.name}</code>
               </motion.span>
             )}
             {helperIsHovered === 'name' && (
-              <motion.span key="name" {...helperAnimations}>
+              <motion.span key="name" {...fadeInOut}>
                 The name of the slider
                 <br></br>
                 <code>@default Slider + $index</code>
               </motion.span>
             )}
             {helperIsHovered === 'cc' && (
-              <motion.span key="cc" {...helperAnimations}>
+              <motion.span key="cc" {...fadeInOut}>
                 The <code>CC</code> value that will be used to send the <code>MIDI</code> data
                 <br></br>
               </motion.span>
             )}
             {helperIsHovered === 'defaultValue' && (
-              <motion.span key="defaultValue" {...helperAnimations}>
+              <motion.span key="defaultValue" {...fadeInOut}>
                 The default value when resetting the <code>MIDI</code> controller
                 <br></br>
               </motion.span>
             )}
             {helperIsHovered === 'maxValue' && (
-              <motion.span key="maxValue" {...helperAnimations}>
+              <motion.span key="maxValue" {...fadeInOut}>
                 The max value of the <code>MIDI</code> controller. Set to <code>1</code> and it will operate as a
                 boolean switch
                 <code>true</code>
@@ -274,7 +276,7 @@ export const SliderForm = () => {
               </motion.span>
             )}
             {helperIsHovered === 'minValue' && (
-              <motion.span key="minValue" {...helperAnimations}>
+              <motion.span key="minValue" {...fadeInOut}>
                 The min value of the <code>MIDI</code> controller
                 <br></br>
               </motion.span>
@@ -292,8 +294,8 @@ export const SliderForm = () => {
           </button>
         </Tooltip>
 
-        <pre
-          className={styles.pre}
+        <button
+          type="button"
           onClick={event => {
             const { textContent } = event.target as HTMLElement;
 
@@ -308,8 +310,8 @@ export const SliderForm = () => {
             });
           }}
         >
-          {template}
-        </pre>
+          <pre className={styles.pre}>{form.isInitialized ? codeTemplate : 'Loading...'}</pre>
+        </button>
       </div>
     </Form>
   );
@@ -327,8 +329,8 @@ export const SliderField = ({
   value?: string;
   index: number;
   setHelperIsHovered: Dispatch<SetStateAction<Helpers | null>>;
-  form: UseFormReturn<SliderFormValues, any, SliderFormValues>;
-  fieldArray: UseFieldArrayReturn<SliderFormValues, 'sliders', 'id'>;
+  form: UseFormReturn<FormSchemaType, any, FormSchemaType>;
+  fieldArray: UseFieldArrayReturn<FormSchemaType, 'sliders', 'id'>;
 }) => {
   return (
     <motion.div
@@ -360,7 +362,8 @@ export const SliderField = ({
             placeholder={'1'}
             className={styles.number}
             type="number"
-            {...form?.register(`sliders.${index}.cc`)}
+            {...form?.register(`sliders.${index}.cc`, { valueAsNumber: true })}
+            {...getMinMaxAttributesFromChecks(SliderSchema.shape.cc._def.innerType._def.schema._def.checks)}
             onFocus={() => setHelperIsHovered('cc')}
             onBlur={e => {
               form?.register(`sliders.${index}.cc`).onBlur(e);
@@ -375,7 +378,10 @@ export const SliderField = ({
             placeholder={'64'}
             className={styles.number}
             type="number"
-            {...form?.register(`sliders.${index}.defaultValue`)}
+            {...form?.register(`sliders.${index}.defaultValue`, { valueAsNumber: true })}
+            {...getMinMaxAttributesFromChecks(
+              SliderSchema.shape.defaultValue._def.innerType._def.innerType._def.checks
+            )}
             onFocus={() => setHelperIsHovered('defaultValue')}
             onBlur={e => {
               form?.register(`sliders.${index}.defaultValue`).onBlur(e);
@@ -390,7 +396,8 @@ export const SliderField = ({
             placeholder={'0'}
             className={styles.number}
             type="number"
-            {...form?.register(`sliders.${index}.minValue`)}
+            {...form?.register(`sliders.${index}.minValue`, { valueAsNumber: true })}
+            {...getMinMaxAttributesFromChecks(SliderSchema.shape.minValue._def.innerType._def.innerType._def.checks)}
             onFocus={() => setHelperIsHovered('minValue')}
             onBlur={e => {
               form?.register(`sliders.${index}.minValue`).onBlur(e);
@@ -405,7 +412,8 @@ export const SliderField = ({
             placeholder={'127'}
             className={styles.number}
             type="number"
-            {...form?.register(`sliders.${index}.maxValue`)}
+            {...form?.register(`sliders.${index}.maxValue`, { valueAsNumber: true })}
+            {...getMinMaxAttributesFromChecks(SliderSchema.shape.maxValue._def.innerType._def.innerType._def.checks)}
             onFocus={() => setHelperIsHovered('maxValue')}
             onBlur={e => {
               form?.register(`sliders.${index}.maxValue`).onBlur(e);

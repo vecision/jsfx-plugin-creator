@@ -129,6 +129,15 @@
     }
   }
 
+  button {
+    appearance: none;
+    padding: 0;
+    background: transparent;
+    margin: 0;
+    text-align: left;
+    width: 100%;
+  }
+
   .pre {
     font-size: 14px;
     background: var(--color-bg-1);
@@ -136,6 +145,7 @@
     padding: 1.5em;
     overflow: auto;
     height: 85svh;
+    width: 100%;
     max-width: 100svw;
     white-space: break-spaces;
     border-radius: var(--brs-large);
