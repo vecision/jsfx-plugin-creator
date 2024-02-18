@@ -146,147 +146,149 @@ export const SliderForm = () => {
   const rootProps = getRootProps();
 
   return (
-    <div
-      className={classNames(styles.plugin)}
-      ref={rootProps.refKey}
-      onDrop={rootProps.onDrop}
-      onDragEnter={rootProps.onDragEnter}
-      onDragLeave={rootProps.onDragLeave}
-      onDragOver={rootProps.onDragEnter}
-      role="presentation"
-    >
-      <Form form={form} className={styles.form}>
-        <div className={styles.fields}>
-          <fieldset className={styles.info}>
-            <legend>Plugin information</legend>
-            <label>
-              Name{' '}
-              <input
-                placeholder={form.isInitialized ? 'Plugin name' : 'Loading...'}
-                className={styles.input}
-                {...form?.register('name')}
-                onFocus={() => setHelperIsHovered('pluginName')}
-                onBlur={e => {
-                  form?.register(`name`).onBlur(e);
-                  setHelperIsHovered(null);
-                }}
-              />
-            </label>
-            <div className={styles.control}>
-              <Actions
-                className={styles.control}
-                items={[
-                  {
-                    id: 'feature-request',
-                    tooltip: { content: 'Support/Feature request' },
-                    icon: { icon: 'QuestionMarkCircleIcon' },
-                    href: `mailto:kaijurox@gmail.com?subject=jsfx-plugin-generator - Bug/Feature Request&body=If you\'re having issues, please enter what you\'re experiencing and what you are expecting should happen.%0A%0AIf it's a feature request, then please write your idea, how it should work and why it would be useful to others.%0A%0AThank you!`,
-                    onFocus: () => setHelperIsHovered('featureRequest'),
-                    onMouseOver: () => setHelperIsHovered('featureRequest'),
-                    onBlur: () => {
-                      setHelperIsHovered(null);
-                    },
-                    onMouseLeave: () => {
-                      setHelperIsHovered(null);
-                    },
-                  },
-                  {
-                    id: 'intro',
-                    tooltip: { content: 'See intro text again' },
-                    icon: { icon: 'InformationCircleIcon' },
-                    onClick: introDialog.setOpen,
-                  },
-                  {
-                    id: 'upload-preset',
-                    tooltip: { content: 'Upload preset from clipboard' },
-                    icon: { icon: 'CloudArrowUpIcon' },
-                    onClick: handleUploadPresetFromClipboard,
-                    onFocus: () => setHelperIsHovered('uploadPreset'),
-                    onMouseOver: () => setHelperIsHovered('uploadPreset'),
-                    onBlur: () => {
-                      setHelperIsHovered(null);
-                    },
-                    onMouseLeave: () => {
-                      setHelperIsHovered(null);
-                    },
-                  },
-                  {
-                    id: 'download-preset',
-                    tooltip: { content: 'Download preset' },
-                    icon: { icon: 'CloudArrowDownIcon' },
-                    onClick: handleDownloadPreset,
-                  },
-                  {
-                    id: 'reset',
-                    tooltip: {
-                      content: 'Reset the form',
-                    },
-                    icon: { icon: 'TrashIcon' },
-                    onClick: () => {
-                      form.reset(defaultValues);
-                    },
-                  },
-                ]}
-              />
-            </div>
-          </fieldset>
-          <fieldset className={styles.sliders}>
-            <legend>Sliders</legend>
-            <AnimatePresence>
-              {fieldArray.fields.map((field, index) => (
-                <SliderField
-                  key={field.id}
-                  index={index}
-                  form={form}
-                  fieldArray={fieldArray}
-                  setHelperIsHovered={setHelperIsHovered}
-                  {...field}
+    <>
+      <div
+        className={classNames(styles.plugin)}
+        ref={rootProps.refKey}
+        onDrop={rootProps.onDrop}
+        onDragEnter={rootProps.onDragEnter}
+        onDragLeave={rootProps.onDragLeave}
+        onDragOver={rootProps.onDragEnter}
+        role="presentation"
+      >
+        <Form form={form} className={styles.form}>
+          <div className={styles.fields}>
+            <fieldset className={styles.info}>
+              <legend>Plugin information</legend>
+              <label>
+                Name{' '}
+                <input
+                  placeholder={form.isInitialized ? 'Plugin name' : 'Loading...'}
+                  className={styles.input}
+                  {...form?.register('name')}
+                  onFocus={() => setHelperIsHovered('pluginName')}
+                  onBlur={e => {
+                    form?.register(`name`).onBlur(e);
+                    setHelperIsHovered(null);
+                  }}
                 />
-              ))}
-            </AnimatePresence>
-          </fieldset>
-
-          <div className={styles.helpers}>
-            <AnimatePresence mode="wait">{HELPERS?.[helperIsHovered as keyof typeof HELPERS]}</AnimatePresence>
-          </div>
-        </div>
-
-        <div className={styles.code}>
-          <header className={styles.header}>
-            <h3 className={styles.title}>Click the code block to copy</h3>
-
-            <div className={styles.control}>
-              <Button icon={{ icon: 'DocumentArrowDownIcon' }} onClick={handleDownloadPlugin}>
-                Download the plugin
-              </Button>
-            </div>
-          </header>
-
-          <pre ref={preRef} className={styles.pre}>
-            {form.isInitialized && codeTemplate ? (
-              <>
-                {codeTemplate.map((line, index) => (
-                  <Fragment key={line + index}>
-                    <code className={styles.lineNumber}>{index + 1}</code>
-                    {line}
-                    <br />
-                  </Fragment>
+              </label>
+              <div className={styles.control}>
+                <Actions
+                  className={styles.control}
+                  items={[
+                    {
+                      id: 'feature-request',
+                      tooltip: { content: 'Support/Feature request' },
+                      icon: { icon: 'QuestionMarkCircleIcon' },
+                      href: `mailto:kaijurox@gmail.com?subject=jsfx-plugin-generator - Bug/Feature Request&body=If you\'re having issues, please enter what you\'re experiencing and what you are expecting should happen.%0A%0AIf it's a feature request, then please write your idea, how it should work and why it would be useful to others.%0A%0AThank you!`,
+                      onFocus: () => setHelperIsHovered('featureRequest'),
+                      onMouseOver: () => setHelperIsHovered('featureRequest'),
+                      onBlur: () => {
+                        setHelperIsHovered(null);
+                      },
+                      onMouseLeave: () => {
+                        setHelperIsHovered(null);
+                      },
+                    },
+                    {
+                      id: 'intro',
+                      tooltip: { content: 'See intro text again' },
+                      icon: { icon: 'InformationCircleIcon' },
+                      onClick: introDialog.setOpen,
+                    },
+                    {
+                      id: 'upload-preset',
+                      tooltip: { content: 'Upload preset from clipboard' },
+                      icon: { icon: 'CloudArrowUpIcon' },
+                      onClick: handleUploadPresetFromClipboard,
+                      onFocus: () => setHelperIsHovered('uploadPreset'),
+                      onMouseOver: () => setHelperIsHovered('uploadPreset'),
+                      onBlur: () => {
+                        setHelperIsHovered(null);
+                      },
+                      onMouseLeave: () => {
+                        setHelperIsHovered(null);
+                      },
+                    },
+                    {
+                      id: 'download-preset',
+                      tooltip: { content: 'Download preset' },
+                      icon: { icon: 'CloudArrowDownIcon' },
+                      onClick: handleDownloadPreset,
+                    },
+                    {
+                      id: 'reset',
+                      tooltip: {
+                        content: 'Reset the form',
+                      },
+                      icon: { icon: 'TrashIcon' },
+                      onClick: () => {
+                        form.reset(defaultValues);
+                      },
+                    },
+                  ]}
+                />
+              </div>
+            </fieldset>
+            <fieldset className={styles.sliders}>
+              <legend>Sliders</legend>
+              <AnimatePresence>
+                {fieldArray.fields.map((field, index) => (
+                  <SliderField
+                    key={field.id}
+                    index={index}
+                    form={form}
+                    fieldArray={fieldArray}
+                    setHelperIsHovered={setHelperIsHovered}
+                    {...field}
+                  />
                 ))}
-              </>
-            ) : (
-              'Loading...'
-            )}
+              </AnimatePresence>
+            </fieldset>
+          </div>
 
-            <Button
-              tooltip={{ content: 'Copy to clipboard' }}
-              icon={{ icon: 'DocumentArrowDownIcon' }}
-              onClick={handleCopyPresetToClipboard}
-              className={styles.download}
-            />
-          </pre>
-        </div>
-      </Form>
+          <div className={styles.code}>
+            <header className={styles.header}>
+              <h3 className={styles.title}>Click the code block to copy</h3>
 
+              <div className={styles.control}>
+                <Button icon={{ icon: 'DocumentArrowDownIcon' }} onClick={handleDownloadPlugin}>
+                  Download the plugin
+                </Button>
+              </div>
+            </header>
+
+            <pre ref={preRef} className={styles.pre}>
+              {form.isInitialized && codeTemplate ? (
+                <>
+                  {codeTemplate.map((line, index) => (
+                    <Fragment key={line + index}>
+                      <code className={styles.lineNumber}>{index + 1}</code>
+                      {line}
+                      <br />
+                    </Fragment>
+                  ))}
+                </>
+              ) : (
+                'Loading...'
+              )}
+
+              <Button
+                tooltip={{ content: 'Copy to clipboard' }}
+                icon={{ icon: 'DocumentArrowDownIcon' }}
+                onClick={handleCopyPresetToClipboard}
+                className={styles.download}
+              />
+            </pre>
+          </div>
+        </Form>
+      </div>
+
+      <Splash show={!form.isInitialized} delay={haveShownDialog ? 50 : 500}>
+        <Spinner style={{ width: 100, height: 100, opacity: 0.5 }} />
+      </Splash>
+      <IntroDialog dialog={introDialog} />
       <div
         className={classNames(styles.dropzone, {
           [styles.dragActive]: isDragActive,
@@ -296,11 +298,10 @@ export const SliderForm = () => {
         <input {...getInputProps()} />
         {<p className={styles.text}>Drop here to upload preset</p>}
       </div>
-      <Splash show={!form.isInitialized} delay={haveShownDialog ? 50 : 500}>
-        <Spinner style={{ width: 100, height: 100, opacity: 0.5 }} />
-      </Splash>
-      <IntroDialog dialog={introDialog} />
-    </div>
+      <div className={styles.helpers}>
+        <AnimatePresence mode="wait">{HELPERS?.[helperIsHovered as keyof typeof HELPERS]}</AnimatePresence>
+      </div>
+    </>
   );
 };
 

@@ -92,9 +92,10 @@
   transition: background var(--trs-instant);
   flex-flow: row wrap;
   gap: 1em;
-  position: relative;
 
   @container (min-width: 800px) {
+    position: relative;
+
     .control {
       margin-left: auto;
       align-items: flex-end;
