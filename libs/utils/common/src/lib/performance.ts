@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 /**
  * This converts an object or array into a primitive key.
  * This is useful for React hooks when you need a primitive key for the dependency array.
@@ -20,12 +18,4 @@ import { useMemo } from 'react';
   }
  * ```
  */
-export const useMemoKey = <T extends object | unknown[] | null>(item: T) => {
-  return useMemo(() => {
-    if (typeof item !== 'object') {
-      return item;
-    }
-
-    return JSON.stringify(item);
-  }, [item]);
-};
+export const toMemoKey = <T>(values: T) => JSON.stringify(values);

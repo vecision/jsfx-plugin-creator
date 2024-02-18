@@ -30,7 +30,8 @@
   margin: 0;
   border-radius: var(--brs-small);
   background: var(--color-bg-3);
-  transition: background var(--trs-quick), scale var(--trs-quick);
+  border: 1px solid var(--color-bg-4);
+  transition: background var(--trs-quick), border-color var(--trs-quick), scale var(--trs-quick);
   scale: 1 1;
   font-size: 14px;
   font-weight: var(--font-weight-light);
@@ -40,6 +41,7 @@
   align-items: center;
   gap: 0.25em;
   cursor: pointer;
+  text-decoration: none;
 
   @container (max-width: 499px) {
     width: 100%;
@@ -60,6 +62,15 @@
     scale: 1.05 1.05;
   }
 
+  &:not([disabled]) {
+    cursor: pointer;
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+    background: var(--color-bg-1);
+  }
+
   &.has-icon {
     .icon {
       --_size: 24px;
@@ -76,15 +87,6 @@
     border-radius: 50%;
     transition: scale var(--trs-instant);
     padding: 0.5em;
-
-    &:not([disabled]) {
-      cursor: pointer;
-    }
-
-    &[disabled] {
-      cursor: not-allowed;
-      background: #{rgba(var(--color-text-rgb), 0.15)};
-    }
 
     &:hover,
     &:focus-visible {

@@ -8,6 +8,7 @@ export * from './lib/form';
 export * from './lib/guards';
 export * from './lib/hooks';
 export * from './lib/object';
+export * from './lib/performance';
 export * from './lib/schema';
 export * from './lib/server';
 export * from './lib/storage';

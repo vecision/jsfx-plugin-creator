@@ -6,12 +6,13 @@ import { Actions } from '@jsfx-plugins-generator/components/actions/actions';
 
 import styles from './dialog.module.scss';
 
-type DialogProps = {
+export type DialogProps = {
   children: React.ReactNode;
   dialog?: ReturnType<typeof useDialog>;
   className?: string;
   title?: ReactNode;
 };
+
 export const Dialog = ({ children, dialog, className, title }: DialogProps) => {
   const fallbackController = useDialog();
   const controller = dialog ?? fallbackController;

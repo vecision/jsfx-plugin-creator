@@ -1,6 +1,6 @@
 import { CSSProperties } from 'react';
 
-export const toCSSProperties = (properties: CSSProperties, scope = '_'): CSSProperties => {
+export const toCSSProperties = (properties: CSSProperties & Record<string, unknown>, scope = '_'): CSSProperties => {
   const newProperties: CSSProperties = {};
   for (const key in properties) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

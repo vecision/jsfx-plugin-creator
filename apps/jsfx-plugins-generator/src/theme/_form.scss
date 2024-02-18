@@ -1,4 +1,10 @@
-input {
+input,
+select {
+  height: 40px;
+}
+input,
+textarea,
+select {
   background: inherit;
   border: 1px solid rgba(var(--color-text-rgb), 0.2);
   border-radius: var(--brs-small);
@@ -7,9 +13,22 @@ input {
   font-weight: var(--font-weight-light);
   transition: border-color 0.1s ease-in-out;
 
-  &:focus-visible,
-  &:hover {
-    border-color: rgba(var(--color-text-rgb), 1);
+  &::placeholder {
+    color: var(--color-text-5);
+    font-size: 16px;
+  }
+
+  &:not([disabled]) {
+    &:focus-visible,
+    &:hover {
+      border-color: rgba(var(--color-text-rgb), 1);
+    }
+  }
+
+  &[disabled] {
+    background: var(--color-bg-2);
+    color: var(--color-text-3);
+    border-color: rgba(var(--color-text-rgb), 0.2);
   }
 }
 

@@ -3,7 +3,7 @@ import cn from 'classnames';
 import { ReactNode } from 'react';
 import { toast, ToastContainer, ToastOptions } from 'react-toastify';
 
-import { Icon, IconProps } from '@jsfx-plugins-generator/components/icon';
+import { Icon, IconProps } from '@jsfx-plugins-generator/components/icon/icon';
 
 import styles from './toast.module.scss';
 

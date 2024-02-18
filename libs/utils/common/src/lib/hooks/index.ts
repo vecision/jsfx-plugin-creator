@@ -5,7 +5,6 @@ export * from './use-event-listeners';
 export * from './use-interval';
 export * from './use-is-mounted';
 export * from './use-isomorphic-layout-effect';
-export * from './use-memo-key';
 export * from './use-preserve-string';
 export * from './use-query-state';
 export * from './use-rerender';

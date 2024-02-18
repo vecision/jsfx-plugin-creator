@@ -30,6 +30,10 @@
     }
   }
 
+  &:not([open]) {
+    pointer-events: none;
+  }
+
   &[open] {
     .content {
       transition: opacity var(--trs-quick), translate var(--trs-quick);

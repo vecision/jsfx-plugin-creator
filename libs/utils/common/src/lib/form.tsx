@@ -1,7 +1,7 @@
 import { FormHTMLAttributes, ReactNode, useEffect, useState, useTransition } from 'react';
 import * as ReactHookForm from 'react-hook-form';
 
-import { useMemoKey } from './hooks';
+import { toMemoKey } from './performance';
 import { isServer } from './server';
 import { persist } from './storage';
 
@@ -104,7 +104,7 @@ Form.useForm = <TFieldValues extends ReactHookForm.FieldValues = ReactHookForm.F
   });
 
   const values = form.watch();
-  const valuesKey = useMemoKey(values);
+  const valuesKey = toMemoKey(values);
 
   /**
    * Save the form values to browser storage

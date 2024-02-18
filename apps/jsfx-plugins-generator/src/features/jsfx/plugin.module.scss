@@ -96,7 +96,8 @@
   @container (min-width: 800px) {
     .control {
       margin-left: auto;
-      align-items: center;
+      align-items: flex-end;
+      padding-bottom: 0.25em;
     }
   }
 
@@ -120,6 +121,7 @@
 .control {
   display: flex;
   flex-flow: row nowrap;
+
   gap: 0.5em;
 }
 
@@ -168,11 +170,26 @@
     max-width: calc(100svw - 2em);
     border-radius: var(--brs-large);
     transition: color var(--trs-quick);
-    cursor: url('/assets/copy-paste.png'), auto;
+    position: relative;
 
     @container (min-width: 500px) {
       max-height: calc(100vh - 6em);
     }
+
+    .lineNumber {
+      display: inline-block;
+      text-align: right;
+      width: 16px;
+      margin-right: 1em;
+      user-select: none;
+      color: var(--color-text-8);
+    }
+  }
+
+  .download {
+    position: absolute;
+    top: 1em;
+    right: 1em;
   }
 }
 
