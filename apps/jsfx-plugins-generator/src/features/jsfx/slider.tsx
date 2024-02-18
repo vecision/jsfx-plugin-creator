@@ -145,28 +145,28 @@ export const SliderField = ({
           {
             id: 'move-up',
             tooltip: { content: 'Move up' },
-            icon: { icon: 'ChevronUpIcon' },
+            icon: { icon: 'ChevronUpIcon', scale: 1.2 },
             disabled: index === 0,
             onClick: () => fieldArray.move(index, index - 1),
           },
           {
             id: 'move-down',
             tooltip: { content: 'Move down' },
-            icon: { icon: 'ChevronDownIcon' },
+            icon: { icon: 'ChevronDownIcon', scale: 1.2 },
             disabled: fieldArray.fields.length === index + 1,
             onClick: () => fieldArray.move(index, index + 1),
           },
           {
             id: 'add',
             tooltip: { content: 'Add slider' },
-            icon: { icon: 'PlusIcon' },
+            icon: { icon: 'PlusIcon', scale: 1.2 },
             onClick: () =>
               fieldArray.insert(index + 1, { ...sliderDefault, name: `Slider${fieldArray.fields.length + 1}` }),
           },
           {
             id: 'remove',
             tooltip: { content: 'Remove slider' },
-            icon: { icon: 'MinusIcon' },
+            icon: { icon: 'MinusIcon', scale: 1.2 },
             disabled: fieldArray.fields.length === 1,
             onClick: () => {
               if (fieldArray.fields.length === 1) {
