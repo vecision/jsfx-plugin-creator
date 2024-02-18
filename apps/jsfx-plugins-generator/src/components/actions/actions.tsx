@@ -41,10 +41,12 @@ export const Actions = ({ items, direction = 'row', alignment }: ActionProps) =>
 };
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  icon?: IconProps;
+  icon?: IconProps & { iconPosition?: 'before' | 'after' };
 };
 
-export const Button = forwardRef(({ icon, ...props }: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) => {
+export const Button = forwardRef(({ icon, children, ...props }: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) => {
+  const iconPosition = icon?.iconPosition ?? 'before';
+
   return (
     <button
       {...props}
@@ -52,10 +54,12 @@ export const Button = forwardRef(({ icon, ...props }: ButtonProps, ref: Forwarde
       type={props.type ?? 'button'}
       className={classNames(styles.button, props.className, {
         [styles['has-icon']]: !!icon,
-        [styles['icon-only']]: !!icon && !props.children,
+        [styles['icon-only']]: !!icon && !children,
       })}
     >
-      {icon && <Icon {...icon} />}
+      {icon && iconPosition === 'before' && <Icon {...icon} />}
+      {children}
+      {icon && iconPosition === 'after' && <Icon {...icon} />}
     </button>
   );
 });

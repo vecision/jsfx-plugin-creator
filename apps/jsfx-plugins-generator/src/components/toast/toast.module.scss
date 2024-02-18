@@ -3,7 +3,7 @@
   padding: 0;
   color: var(--color-text-3);
   font-family: var(--font-family-noto-sans);
-  background: var(--color-bg-5);
+  background: var(--color-bg-5-solid);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 20%);
   height: auto;
   min-height: 52px;
@@ -22,7 +22,7 @@
   }
 
   .body {
-    padding: 0;
+    padding: 0.5em 0;
     height: auto;
 
     > div {

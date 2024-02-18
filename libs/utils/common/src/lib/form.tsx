@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState, useTransition } from 'react';
+import { FormHTMLAttributes, ReactNode, useEffect, useState, useTransition } from 'react';
 import * as ReactHookForm from 'react-hook-form';
 
 import { useMemoKey } from './hooks';
@@ -24,9 +24,11 @@ export const Form = <TFieldValues extends ReactHookForm.FieldValues = ReactHookF
   onValid,
   onInvalid,
   id,
-}: FormProps<TFieldValues, TContext>) => {
+  ...rest
+}: FormProps<TFieldValues, TContext> & FormHTMLAttributes<HTMLFormElement>) => {
   return (
     <form
+      {...rest}
       id={id}
       className={className}
       onSubmit={event => {

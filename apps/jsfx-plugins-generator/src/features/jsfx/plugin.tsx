@@ -1,9 +1,20 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, getMinMaxAttributesFromChecks, persist } from '@utils-common';
+import { Form, getMinMaxAttributesFromChecks, persist, UseFormReturnType } from '@utils-common';
+import classNames from 'classnames';
 import { saveAs } from 'file-saver';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Dispatch, InputHTMLAttributes, SetStateAction, useEffect, useRef, useState } from 'react';
+import {
+  Dispatch,
+  InputHTMLAttributes,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { DropzoneOptions, useDropzone } from 'react-dropzone';
 import { useFieldArray, UseFieldArrayReturn, UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -17,6 +28,8 @@ import { fadeInOut } from '@jsfx-plugins-generator/utils/animations';
 import { blockTemplate, jsfxPluginTemplate } from '@jsfx-plugins-generator/features/jsfx/plugin.template';
 
 import styles from './plugin.module.scss';
+
+const toMemoKey = <T,>(values: T) => JSON.stringify(values);
 
 const SliderSchema = z.object({
   name: z.string(),
@@ -74,7 +87,60 @@ const defaultValues: FormSchemaType = {
   ],
 };
 
-type Helpers = keyof FormSchemaType['sliders'][0] | 'pluginName';
+type Helpers = keyof FormSchemaType['sliders'][0] | 'pluginName' | 'uploadPreset';
+
+const HELPERS = {
+  pluginName: (
+    <motion.p key="pluginName" {...fadeInOut}>
+      <span>The name of the Plugin</span>
+      <code>@default {defaultValues.name}</code>
+    </motion.p>
+  ),
+  name: (
+    <motion.p key="name" {...fadeInOut}>
+      <span>The name of the slider</span>
+      <code>@default Slider + $index</code>
+    </motion.p>
+  ),
+  cc: (
+    <motion.p key="cc" {...fadeInOut}>
+      <span>The</span>
+      <code>CC</code>
+      <span>value that will be used to send the</span>
+      <code>MIDI</code>
+      <span>data</span>
+    </motion.p>
+  ),
+  defaultValue: (
+    <motion.p key="defaultValue" {...fadeInOut}>
+      <span>The default value when resetting the</span>
+      <code>MIDI</code>
+      <span>controller</span>
+    </motion.p>
+  ),
+  maxValue: (
+    <motion.p key="maxValue" {...fadeInOut}>
+      <span>The max value of the</span>
+      <code>MIDI</code> <span>controller. Set to</span> <code>1</code>{' '}
+      <span>and it will operate as a boolean switch</span>
+      <code>true</code>
+      <code>/</code>
+      <code>false</code>
+    </motion.p>
+  ),
+  minValue: (
+    <motion.p key="minValue" {...fadeInOut}>
+      The min value of the <code>MIDI</code> controller
+      <br />
+    </motion.p>
+  ),
+  uploadPreset: (
+    <motion.p key="uploadPreset" {...fadeInOut}>
+      You can also drag and drop a preset anywhere on the screen to upload it
+      <br />
+    </motion.p>
+  ),
+} satisfies Partial<Record<Helpers, ReactNode>>;
 
 export const SliderForm = () => {
   const timeout = useRef<number>();
@@ -107,65 +173,7 @@ export const SliderForm = () => {
   }, [fieldArray?.fields?.length]);
 
   // The template for the JSFX plugin
-  const codeTemplate = jsfxPluginTemplate
-    .replace(/%PLUGIN_NAME%/, form.watch('name'))
-    .replace(
-      /%DATE%/,
-      new Intl.DateTimeFormat('en-Gb', {
-        timeStyle: 'medium',
-        dateStyle: 'medium',
-      }).format(new Date())
-    )
-    .replace(
-      /%SLIDERS%/,
-      form.watch('sliders')?.reduce((acc, slider, index) => {
-        return `${acc}slider${index + 1}:${slider.defaultValue}<${slider.minValue},${slider.maxValue},1>${
-          slider.name
-        } (${slider.cc})\n`;
-      }, '')
-    )
-    .replace(
-      /%BLOCKS%/,
-      form.watch('sliders')?.reduce((acc, slider, index) => {
-        return `${acc}${blockTemplate
-          .replace(/%SLIDER_INDEX%/g, (index + 1).toString())
-          .replace(/%SLIDER_CC%/g, (slider?.cc || 1)?.toString())}\n`;
-      }, '')
-    );
-
-  const handleUploadPresetFromClipboard = () => {
-    navigator.clipboard.readText().then(text => {
-      try {
-        const data = JSON.parse(text);
-
-        form.reset(data);
-
-        toast.info({
-          title: 'Upload successful',
-        });
-      } catch (error) {
-        if (error) {
-          toast.error({
-            title: 'Error',
-            message:
-              'Invalid JSON. Make sure that the preset in your clipboard is valid. Note that you can not upload a *.jsfx plugin - it needs to be the preset',
-          });
-        }
-      }
-    });
-  };
-
-  const handleDownloadPreset = () => {
-    const fileName = `${form.watch('name')}.json`;
-
-    // Create a blob of the data
-    const fileToSave = new Blob([JSON.stringify(form.getValues())], {
-      type: 'application/json',
-    });
-
-    // Save the file
-    saveAs(fileToSave, fileName);
-  };
+  const codeTemplate = useCodeTemplate(form);
 
   const handleDownloadPlugin = () => {
     const fileName = `${form.watch('name')}.jsfx`;
@@ -188,21 +196,35 @@ export const SliderForm = () => {
     },
   });
 
+  const { uploadPreset, handleUploadPresetFromClipboard, handleDownloadPreset } = usePreset(form, toast);
+
+  const onDrop: DropzoneOptions['onDrop'] = useCallback(
+    async ([file]: File[]) => {
+      const text = await file.text();
+
+      uploadPreset(text);
+    },
+    [uploadPreset]
+  );
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      'text/*': ['.json'],
+    },
+  });
+
+  const rootProps = getRootProps();
+
   return (
-    <div className={styles.plugin}>
-      <Dialog dialog={introDialog} title="Thank you for using the the JSFX Plugin Generator for Reaper">
-        <p>asdfhasdfh ashfdsa jkh fsdkhj</p>
-        <Dialog.Actions
-          alignment="flex-end"
-          items={[
-            {
-              id: 'confirm',
-              label: 'Got it!',
-              onClick: introDialog.setClose,
-            },
-          ]}
-        />
-      </Dialog>
+    <div
+      className={classNames(styles.plugin)}
+      ref={rootProps.refKey}
+      onDrop={rootProps.onDrop}
+      onDragEnter={rootProps.onDragEnter}
+      onDragLeave={rootProps.onDragLeave}
+      onDragOver={rootProps.onDragEnter}
+    >
       <Form form={form} className={styles.form}>
         <div className={styles.fields}>
           <fieldset className={styles.info}>
@@ -220,13 +242,23 @@ export const SliderForm = () => {
                 }}
               />
             </label>
-
             <div className={styles.control}>
               <Tooltip content="See intro text again">
                 <Button icon={{ icon: 'InformationCircleIcon' }} onClick={introDialog.setOpen} />
               </Tooltip>
               <Tooltip content="Upload preset from clipboard">
-                <Button icon={{ icon: 'CloudArrowUpIcon' }} onClick={handleUploadPresetFromClipboard} />
+                <Button
+                  icon={{ icon: 'CloudArrowUpIcon' }}
+                  onClick={handleUploadPresetFromClipboard}
+                  onFocus={() => setHelperIsHovered('uploadPreset')}
+                  onMouseOver={() => setHelperIsHovered('uploadPreset')}
+                  onBlur={() => {
+                    setHelperIsHovered(null);
+                  }}
+                  onMouseLeave={() => {
+                    setHelperIsHovered(null);
+                  }}
+                />
               </Tooltip>
               <Tooltip content="Download preset">
                 <Button icon={{ icon: 'CloudArrowDownIcon' }} onClick={handleDownloadPreset} />
@@ -246,7 +278,7 @@ export const SliderForm = () => {
             <AnimatePresence>
               {fieldArray.fields.map((field, index) => (
                 <SliderField
-                  key={field.id} // important to include key with field's id
+                  key={field.id}
                   index={index}
                   form={form}
                   fieldArray={fieldArray}
@@ -258,52 +290,7 @@ export const SliderForm = () => {
           </fieldset>
 
           <div className={styles.helpers}>
-            <AnimatePresence mode="wait">
-              {helperIsHovered === 'pluginName' && (
-                <motion.p key="pluginName" {...fadeInOut}>
-                  <span>The name of the Plugin</span>
-                  <code>@default {defaultValues.name}</code>
-                </motion.p>
-              )}
-              {helperIsHovered === 'name' && (
-                <motion.p key="name" {...fadeInOut}>
-                  <span>The name of the slider</span>
-                  <code>@default Slider + $index</code>
-                </motion.p>
-              )}
-              {helperIsHovered === 'cc' && (
-                <motion.p key="cc" {...fadeInOut}>
-                  <span>The</span>
-                  <code>CC</code>
-                  <span>value that will be used to send the</span>
-                  <code>MIDI</code>
-                  <span>data</span>
-                </motion.p>
-              )}
-              {helperIsHovered === 'defaultValue' && (
-                <motion.p key="defaultValue" {...fadeInOut}>
-                  <span>The default value when resetting the</span>
-                  <code>MIDI</code>
-                  <span>controller</span>
-                </motion.p>
-              )}
-              {helperIsHovered === 'maxValue' && (
-                <motion.p key="maxValue" {...fadeInOut}>
-                  <span>The max value of the</span>
-                  <code>MIDI</code> <span>controller. Set to</span> <code>1</code>{' '}
-                  <span>and it will operate as a boolean switch</span>
-                  <code>true</code>
-                  <code>/</code>
-                  <code>false</code>
-                </motion.p>
-              )}
-              {helperIsHovered === 'minValue' && (
-                <motion.p key="minValue" {...fadeInOut}>
-                  The min value of the <code>MIDI</code> controller
-                  <br />
-                </motion.p>
-              )}
-            </AnimatePresence>
+            <AnimatePresence mode="wait">{HELPERS?.[helperIsHovered as keyof typeof HELPERS]}</AnimatePresence>
           </div>
         </div>
 
@@ -338,6 +325,29 @@ export const SliderForm = () => {
           </button>
         </div>
       </Form>
+
+      <div
+        className={classNames(styles.dropzone, {
+          [styles.dragActive]: isDragActive,
+        })}
+      >
+        <div className={styles.line} />
+        <input {...getInputProps()} />
+        {<p className={styles.text}>Drop here to upload preset</p>}
+      </div>
+      <Dialog dialog={introDialog} title="Thank you for using the the JSFX Plugin Generator for Reaper">
+        <p>asdfhasdfh ashfdsa jkh fsdkhj</p>
+        <Dialog.Actions
+          alignment="flex-end"
+          items={[
+            {
+              id: 'confirm',
+              label: 'Got it!',
+              onClick: introDialog.setClose,
+            },
+          ]}
+        />
+      </Dialog>
     </div>
   );
 };
@@ -488,3 +498,81 @@ export const SliderField = ({
     </motion.div>
   );
 };
+
+function usePreset(form: UseFormReturnType<FormSchemaType>, toast: ReturnType<typeof useToast>) {
+  const handleDownloadPreset = () => {
+    const fileName = `${form.watch('name')}.json`;
+
+    // Create a blob of the data
+    const fileToSave = new Blob([JSON.stringify(form.getValues())], {
+      type: 'application/json',
+    });
+
+    // Save the file
+    saveAs(fileToSave, fileName);
+  };
+
+  const formKey = toMemoKey(form.getValues());
+
+  const uploadPreset = useCallback(
+    (text: string) => {
+      try {
+        const data = JSON.parse(text);
+
+        form.reset(data);
+
+        toast.success({
+          title: 'Preset was successfully uploaded',
+        });
+      } catch (error) {
+        if (!error) {
+          return;
+        }
+
+        toast.error({
+          title: 'Error',
+          message:
+            'Invalid JSON. Make sure that the preset in your clipboard is valid. Note that you can not upload a *.jsfx plugin - it needs to be the preset',
+        });
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [formKey]
+  );
+
+  const handleUploadPresetFromClipboard = useCallback(async () => {
+    const text = await navigator.clipboard.readText();
+
+    uploadPreset(text);
+  }, [uploadPreset]);
+
+  return { uploadPreset, handleUploadPresetFromClipboard, handleDownloadPreset };
+}
+
+function useCodeTemplate(form: UseFormReturnType<FormSchemaType>) {
+  return jsfxPluginTemplate
+    .replace(/%PLUGIN_NAME%/, form.watch('name'))
+    .replace(
+      /%DATE%/,
+      new Intl.DateTimeFormat('en-Gb', {
+        timeStyle: 'medium',
+        dateStyle: 'medium',
+      }).format(new Date())
+    )
+    .replace(
+      /%SLIDERS%/,
+      form.watch('sliders')?.reduce((acc, slider, index) => {
+        return `${acc}slider${index + 1}:${slider.defaultValue}<${slider.minValue},${slider.maxValue},1>${
+          slider.name
+        } (${slider.cc})\n`;
+      }, '')
+    )
+    .replace(
+      /%BLOCKS%/,
+      form.watch('sliders')?.reduce((acc, slider, index) => {
+        return `${acc}${blockTemplate
+          .replace(/%SLIDER_INDEX%/g, (index + 1).toString())
+          .replace(/%SLIDER_CC%/g, (slider?.cc || 1)?.toString())}\n`;
+      }, '')
+    );
+}

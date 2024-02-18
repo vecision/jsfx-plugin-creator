@@ -8,14 +8,30 @@
   gap: 1em;
   padding: 1em;
 
+  fieldset {
+    padding: 0.5em;
+
+    & + fieldset {
+      margin-top: 1em;
+    }
+  }
+
   @container (min-width: 900px) {
     grid-template-columns: 1fr clamp(300px, 40svw, 700px);
+
+    fieldset {
+      padding: 1em;
+    }
   }
 }
 
 .info {
   display: flex;
   flex-flow: row wrap;
+
+  > label {
+    margin-left: 0.75em;
+  }
 
   .control {
     margin-left: auto;
@@ -65,8 +81,7 @@
   display: flex;
   flex-flow: column nowrap;
   container-type: inline-size;
-  padding: 0.5em;
-  gap: 1em;
+  gap: 0.1em;
 }
 
 .slider {
@@ -77,21 +92,6 @@
   flex-flow: row wrap;
   gap: 1em;
   position: relative;
-
-  &:not(:first-of-type) {
-    &::before {
-      content: '';
-      display: inline-block;
-      position: absolute;
-      left: 0;
-      top: -0.5em;
-      margin: 0 0.5em;
-      width: calc(100% - 1em);
-      height: 1px;
-      background: var(--color-bg-2);
-      border-radius: var(--brs-tiny);
-    }
-  }
 
   @container (min-width: 800px) {
     .control {
@@ -109,7 +109,7 @@
   .inputs {
     display: flex;
     flex-flow: row wrap;
-    gap: 1em;
+    gap: 0.5em;
 
     .number {
       width: 80px;
@@ -167,5 +167,44 @@
     height: var(--_size);
     border-radius: var(--brs-round);
     scale: 1.2;
+  }
+}
+
+.dropzone {
+  position: fixed;
+  inset: 0;
+  background: rgba(var(--color-primary-rgb), 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100svh;
+  width: 100svw;
+  transition: backdrop-filter var(--trs-quick), opacity var(--trs-quick);
+
+  &:not(.dragActive) {
+    opacity: 0;
+    pointer-events: none;
+
+    .text {
+      translate: 0 10px;
+    }
+  }
+
+  .line {
+    position: absolute;
+    inset: 1em;
+    border-radius: var(--brs-large);
+    border: 3px dashed var(--color-text-8);
+    pointer-events: none;
+  }
+
+  .text {
+    transition: translate var(--trs-quick);
+    translate: 0 0;
+    font-size: 30px;
+    max-width: 30ch;
+    font-weight: var(--font-weight-light);
   }
 }
