@@ -46,6 +46,7 @@
   top: calc(100svh - var(--_margin));
   translate: 0 -100%;
   z-index: 1;
+  pointer-events: none;
 
   > p {
     display: inline-flex;
