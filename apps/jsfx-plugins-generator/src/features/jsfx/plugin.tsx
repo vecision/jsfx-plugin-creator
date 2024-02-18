@@ -145,6 +145,7 @@ export const SliderForm = () => {
   const timeout = useRef<number>();
   const toast = useToast();
   const [helperIsHovered, setHelperIsHovered] = useState<Helpers | null>(null);
+  const preRef = useRef<HTMLPreElement>(null);
 
   const form = Form.useForm<FormSchemaType>({
     defaultValues,
@@ -301,30 +302,38 @@ export const SliderForm = () => {
           <header className={styles.header}>
             <h3 className={styles.title}>Click the code block to copy</h3>
 
-            <Button icon={{ icon: 'DocumentArrowDownIcon' }} onClick={handleDownloadPlugin} className={styles.download}>
-              Download the plugin
-            </Button>
+            <div className={styles.control}>
+              <Button
+                tooltip={{ content: 'Copy to clipboard' }}
+                icon={{ icon: 'DocumentArrowDownIcon' }}
+                onClick={() => {
+                  const { textContent } = preRef.current as HTMLPreElement;
+
+                  if (!textContent) {
+                    return;
+                  }
+
+                  navigator.clipboard.writeText(textContent);
+
+                  toast.success({
+                    title: 'Copied to clipboard',
+                  });
+                }}
+                className={styles.download}
+              />
+              <Button
+                icon={{ icon: 'DocumentArrowDownIcon' }}
+                onClick={handleDownloadPlugin}
+                className={styles.download}
+              >
+                Download the plugin
+              </Button>
+            </div>
           </header>
 
-          <button
-            type="button"
-            className={styles.preButton}
-            onClick={event => {
-              const { textContent } = event.target as HTMLElement;
-
-              if (!textContent) {
-                return;
-              }
-
-              navigator.clipboard.writeText(textContent);
-
-              toast.success({
-                title: 'Copied to clipboard',
-              });
-            }}
-          >
-            <pre className={styles.pre}>{form.isInitialized ? codeTemplate : 'Loading...'}</pre>
-          </button>
+          <pre ref={preRef} className={styles.pre}>
+            {form.isInitialized ? codeTemplate : 'Loading...'}
+          </pre>
         </div>
       </Form>
 

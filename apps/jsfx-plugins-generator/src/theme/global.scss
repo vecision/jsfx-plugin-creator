@@ -71,7 +71,7 @@
   --brs-round: 50%;
 
   // Transitions
-  --trs-instant: 0.1s ease-in-out;
+  --trs-instant: 0.125s cubic-bezier(0.4, 0, 0.2, 1);
   --trs-quick: 0.175s ease-in-out;
   --trs-base: 0.3s ease-in-out;
   --trs-smooth: 0.6s ease-in-out;

@@ -29,7 +29,7 @@
   padding: 0.5em 1em;
   margin: 0;
   border-radius: var(--brs-small);
-  background: var(--color-bg-2);
+  background: var(--color-bg-3);
   transition: background var(--trs-quick), scale var(--trs-quick);
   scale: 1 1;
   font-size: 14px;
@@ -39,6 +39,7 @@
   justify-content: center;
   align-items: center;
   gap: 0.25em;
+  cursor: pointer;
 
   @container (max-width: 499px) {
     width: 100%;
@@ -56,7 +57,7 @@
   }
 
   &:active {
-    scale: 1.1 1.1;
+    scale: 1.05 1.05;
   }
 
   &.has-icon {
@@ -71,7 +72,6 @@
     --_size: 30px;
     width: var(--_size);
     height: var(--_size);
-    background: #{rgba(var(--color-text-rgb), 0.3)};
     color: var(--color-text-rgb);
     border-radius: 50%;
     transition: scale var(--trs-instant);

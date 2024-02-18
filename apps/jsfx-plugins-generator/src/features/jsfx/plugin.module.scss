@@ -152,8 +152,12 @@
     font-size: 18px;
   }
 
-  .download {
+  .control {
     margin-left: auto;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: 0.5em;
   }
 
   .pre {
