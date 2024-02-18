@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { ButtonHTMLAttributes, CSSProperties, ForwardedRef, forwardRef } from 'react';
 
 import { Icon, IconProps } from '@jsfx-plugins-generator/components/icon';
+import { Tooltip, TooltipProps } from '@jsfx-plugins-generator/components/tooltip/tooltip';
 
 import { toCSSProperties } from '@jsfx-plugins-generator/utils/css-properties';
 
@@ -44,7 +45,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   icon?: IconProps & { iconPosition?: 'before' | 'after' };
 };
 
-export const Button = forwardRef(({ icon, children, ...props }: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) => {
+const ButtonContent = forwardRef(({ icon, children, ...props }: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) => {
   const iconPosition = icon?.iconPosition ?? 'before';
 
   return (
@@ -57,11 +58,32 @@ export const Button = forwardRef(({ icon, children, ...props }: ButtonProps, ref
         [styles['icon-only']]: !!icon && !children,
       })}
     >
-      {icon && iconPosition === 'before' && <Icon {...icon} />}
+      {icon && iconPosition === 'before' && <Icon className={styles.icon} {...icon} />}
       {children}
-      {icon && iconPosition === 'after' && <Icon {...icon} />}
+      {icon && iconPosition === 'after' && <Icon className={styles.icon} {...icon} />}
     </button>
   );
 });
+
+ButtonContent.displayName = 'ButtonContent';
+
+export const Button = forwardRef(
+  (
+    props: ButtonProps & {
+      tooltip?: TooltipProps;
+    },
+    ref: ForwardedRef<HTMLButtonElement>
+  ) => {
+    if (props.tooltip) {
+      return (
+        <Tooltip {...props.tooltip}>
+          <ButtonContent {...props} ref={ref} />
+        </Tooltip>
+      );
+    }
+
+    return <ButtonContent {...props} ref={ref} />;
+  }
+);
 
 Button.displayName = 'Button';

@@ -21,7 +21,6 @@ import { z } from 'zod';
 import { Button } from '@jsfx-plugins-generator/components/actions/actions';
 import { Dialog } from '@jsfx-plugins-generator/components/dialog/dialog';
 import { useToast } from '@jsfx-plugins-generator/components/toast/toast';
-import { Tooltip } from '@jsfx-plugins-generator/components/tooltip/tooltip';
 
 import { fadeInOut } from '@jsfx-plugins-generator/utils/animations';
 
@@ -243,34 +242,38 @@ export const SliderForm = () => {
               />
             </label>
             <div className={styles.control}>
-              <Tooltip content="See intro text again">
-                <Button icon={{ icon: 'InformationCircleIcon' }} onClick={introDialog.setOpen} />
-              </Tooltip>
-              <Tooltip content="Upload preset from clipboard">
-                <Button
-                  icon={{ icon: 'CloudArrowUpIcon' }}
-                  onClick={handleUploadPresetFromClipboard}
-                  onFocus={() => setHelperIsHovered('uploadPreset')}
-                  onMouseOver={() => setHelperIsHovered('uploadPreset')}
-                  onBlur={() => {
-                    setHelperIsHovered(null);
-                  }}
-                  onMouseLeave={() => {
-                    setHelperIsHovered(null);
-                  }}
-                />
-              </Tooltip>
-              <Tooltip content="Download preset">
-                <Button icon={{ icon: 'CloudArrowDownIcon' }} onClick={handleDownloadPreset} />
-              </Tooltip>
-              <Tooltip content="Clear">
-                <Button
-                  icon={{ icon: 'TrashIcon' }}
-                  onClick={() => {
-                    form.reset(defaultValues);
-                  }}
-                />
-              </Tooltip>
+              <Button
+                tooltip={{ content: 'See intro text again' }}
+                icon={{ icon: 'InformationCircleIcon' }}
+                onClick={introDialog.setOpen}
+              />
+              <Button
+                tooltip={{ content: 'Upload preset from clipboard' }}
+                icon={{ icon: 'CloudArrowUpIcon' }}
+                onClick={handleUploadPresetFromClipboard}
+                onFocus={() => setHelperIsHovered('uploadPreset')}
+                onMouseOver={() => setHelperIsHovered('uploadPreset')}
+                onBlur={() => {
+                  setHelperIsHovered(null);
+                }}
+                onMouseLeave={() => {
+                  setHelperIsHovered(null);
+                }}
+              />
+              <Button
+                tooltip={{ content: 'Download preset' }}
+                icon={{ icon: 'CloudArrowDownIcon' }}
+                onClick={handleDownloadPreset}
+              />
+              <Button
+                tooltip={{
+                  content: 'Reset the form',
+                }}
+                icon={{ icon: 'TrashIcon' }}
+                onClick={() => {
+                  form.reset(defaultValues);
+                }}
+              />
             </div>
           </fieldset>
           <fieldset className={styles.sliders}>
@@ -295,18 +298,17 @@ export const SliderForm = () => {
         </div>
 
         <div className={styles.code}>
-          <h3>Click the code block to copy</h3>
+          <header className={styles.header}>
+            <h3 className={styles.title}>Click the code block to copy</h3>
 
-          <Tooltip content="Download plugin">
-            <Button
-              icon={{ icon: 'DocumentArrowDownIcon' }}
-              onClick={handleDownloadPlugin}
-              className={styles.download}
-            />
-          </Tooltip>
+            <Button icon={{ icon: 'DocumentArrowDownIcon' }} onClick={handleDownloadPlugin} className={styles.download}>
+              Download the plugin
+            </Button>
+          </header>
 
           <button
             type="button"
+            className={styles.preButton}
             onClick={event => {
               const { textContent } = event.target as HTMLElement;
 
@@ -459,41 +461,37 @@ export const SliderField = ({
         </label>
       </div>
       <div className={styles.control}>
-        <Tooltip content="Move up">
-          <Button
-            icon={{ icon: 'ChevronUpIcon' }}
-            disabled={index === 0}
-            onClick={() => fieldArray.move(index, index - 1)}
-          />
-        </Tooltip>
-        <Tooltip content="Move down">
-          <Button
-            icon={{ icon: 'ChevronDownIcon' }}
-            disabled={fieldArray.fields.length === index + 1}
-            onClick={() => fieldArray.move(index, index + 1)}
-          />
-        </Tooltip>
-        <Tooltip content="Add slider">
-          <Button
-            icon={{ icon: 'PlusIcon' }}
-            onClick={() =>
-              fieldArray.insert(index + 1, { ...sliderDefault, name: `Slider${fieldArray.fields.length + 1}` })
+        <Button
+          tooltip={{ content: 'Move up' }}
+          icon={{ icon: 'ChevronUpIcon' }}
+          disabled={index === 0}
+          onClick={() => fieldArray.move(index, index - 1)}
+        />
+        <Button
+          tooltip={{ content: 'Move down' }}
+          icon={{ icon: 'ChevronDownIcon' }}
+          disabled={fieldArray.fields.length === index + 1}
+          onClick={() => fieldArray.move(index, index + 1)}
+        />
+        <Button
+          tooltip={{ content: 'Add slider' }}
+          icon={{ icon: 'PlusIcon' }}
+          onClick={() =>
+            fieldArray.insert(index + 1, { ...sliderDefault, name: `Slider${fieldArray.fields.length + 1}` })
+          }
+        />
+        <Button
+          tooltip={{ content: 'Remove slider' }}
+          icon={{ icon: 'MinusIcon' }}
+          disabled={fieldArray.fields.length === 1}
+          onClick={() => {
+            if (fieldArray.fields.length === 1) {
+              return;
             }
-          />
-        </Tooltip>
-        <Tooltip content="Remove slider">
-          <Button
-            icon={{ icon: 'MinusIcon' }}
-            disabled={fieldArray.fields.length === 1}
-            onClick={() => {
-              if (fieldArray.fields.length === 1) {
-                return;
-              }
 
-              return fieldArray.remove(index);
-            }}
-          />
-        </Tooltip>
+            return fieldArray.remove(index);
+          }}
+        />
       </div>
     </motion.div>
   );

@@ -32,6 +32,13 @@
   background: var(--color-bg-2);
   transition: background var(--trs-quick), scale var(--trs-quick);
   scale: 1 1;
+  font-size: 14px;
+  font-weight: var(--font-weight-light);
+  display: inline-flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25em;
 
   @container (max-width: 499px) {
     width: 100%;
@@ -50,6 +57,14 @@
 
   &:active {
     scale: 1.1 1.1;
+  }
+
+  &.has-icon {
+    .icon {
+      --_size: 24px;
+      width: var(--_size);
+      height: var(--_size);
+    }
   }
 
   &.icon-only {

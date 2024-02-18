@@ -4,6 +4,8 @@ import classNames from 'classnames';
 
 import styles from './tooltip.module.scss';
 
-export const Tooltip = (props: TippyProps) => {
+export type TooltipProps = TippyProps;
+
+export const Tooltip = (props: TooltipProps) => {
   return <Tippy delay={props.delay || 80} className={classNames(props.className, styles.tooltip)} {...props} />;
 };

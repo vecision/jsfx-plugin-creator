@@ -130,19 +130,30 @@
     .pre {
       color: var(--color-text-2);
     }
-
-    .download {
-      scale: 1.4;
-    }
   }
 
-  button {
+  .preButton {
     appearance: none;
     padding: 0;
     background: transparent;
     margin: 0;
     text-align: left;
     width: 100%;
+  }
+
+  .header {
+    display: flex;
+    flex-flow: row nowrap;
+    padding-bottom: 0.5em;
+    align-items: center;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .download {
+    margin-left: auto;
   }
 
   .pre {
@@ -154,19 +165,10 @@
     border-radius: var(--brs-large);
     transition: color var(--trs-quick);
     cursor: url('/assets/copy-paste.png'), auto;
-  }
 
-  .download {
-    --_size: 24px;
-    transition: scale var(--trs-instant);
-    position: absolute;
-    right: 1em;
-    top: 0;
-    // top: 1em;
-    width: var(--_size);
-    height: var(--_size);
-    border-radius: var(--brs-round);
-    scale: 1.2;
+    @container (min-width: 500px) {
+      max-height: calc(100vh - 6em);
+    }
   }
 }
 
