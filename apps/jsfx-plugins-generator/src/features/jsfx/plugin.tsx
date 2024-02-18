@@ -180,7 +180,7 @@ export const SliderForm = () => {
                     id: 'feature-request',
                     tooltip: { content: 'Support/Feature request' },
                     icon: { icon: 'QuestionMarkCircleIcon' },
-                    href: 'mailto:kaijurox@gmail.com?subject=jsfx-plugin-generator - Bug/Feature Request&body=Enter a detailed description of the bug or feature request here',
+                    href: `mailto:kaijurox@gmail.com?subject=jsfx-plugin-generator - Bug/Feature Request&body=If you\'re having issues, please enter what you\'re experiencing and what you are expecting should happen.%0A%0AIf it's a feature request, then please write your idea, how it should work and why it would be useful to others.%0A%0AThank you!`,
                     onFocus: () => setHelperIsHovered('featureRequest'),
                     onMouseOver: () => setHelperIsHovered('featureRequest'),
                     onBlur: () => {
