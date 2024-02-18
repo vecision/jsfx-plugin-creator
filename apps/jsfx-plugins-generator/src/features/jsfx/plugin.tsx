@@ -177,6 +177,21 @@ export const SliderForm = () => {
                 className={styles.control}
                 items={[
                   {
+                    id: 'feature-request',
+                    tooltip: { content: 'Support/Feature request' },
+                    icon: { icon: 'QuestionMarkCircleIcon' },
+                    href: 'mailto:kaijurox@gmail.com?subject=jsfx-plugin-generator - Bug/Feature Request&body=Enter a detailed description of the bug or feature request here',
+                    onClick: introDialog.setOpen,
+                    onFocus: () => setHelperIsHovered('featureRequest'),
+                    onMouseOver: () => setHelperIsHovered('featureRequest'),
+                    onBlur: () => {
+                      setHelperIsHovered(null);
+                    },
+                    onMouseLeave: () => {
+                      setHelperIsHovered(null);
+                    },
+                  },
+                  {
                     id: 'intro',
                     tooltip: { content: 'See intro text again' },
                     icon: { icon: 'InformationCircleIcon' },
@@ -320,7 +335,7 @@ const IntroDialog = ({ dialog }: { dialog: DialogProps['dialog'] }) => {
   );
 };
 
-export type Helpers = keyof FormSchemaType['sliders'][0] | 'pluginName' | 'uploadPreset';
+export type Helpers = keyof FormSchemaType['sliders'][0] | 'pluginName' | 'uploadPreset' | 'featureRequest';
 
 const HELPERS = {
   pluginName: (
@@ -377,6 +392,13 @@ const HELPERS = {
     <motion.p key="uploadPreset" {...fadeInOut}>
       You can also drag and drop a preset anywhere on the screen to upload it
       <br />
+    </motion.p>
+  ),
+  featureRequest: (
+    <motion.p key="featureRequest" {...fadeInOut}>
+      Are you experiencing troubles or have great idea for this project?
+      <br />
+      Feel free to submit a bug or feature request here.
     </motion.p>
   ),
 } satisfies Partial<Record<Helpers, ReactNode>>;

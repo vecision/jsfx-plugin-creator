@@ -1,5 +1,6 @@
 import { toMemoKey } from '@utils-common';
 import classNames from 'classnames';
+import Link, { LinkProps } from 'next/link';
 import { ButtonHTMLAttributes, CSSProperties, ForwardedRef, forwardRef, useMemo } from 'react';
 
 import { Icon, IconProps } from '@jsfx-plugins-generator/components/icon/icon';
@@ -57,39 +58,125 @@ const ButtonContent = forwardRef(
     const iconPosition = icon?.iconPosition ?? 'before';
 
     return (
-      <button
-        {...props}
-        ref={ref}
-        type={props.type ?? 'button'}
-        className={classNames(styles.button, props.className, {
-          [styles['has-icon']]: !!icon,
-          [styles['icon-only']]: !!icon && !children,
-        })}
-      >
+      <>
         {icon && iconPosition === 'before' && <Icon className={styles.icon} size="24px" {...icon} />}
         {children}
         {icon && iconPosition === 'after' && <Icon className={styles.icon} size="24px" {...icon} />}
-      </button>
+      </>
     );
   }
 );
 
 ButtonContent.displayName = 'ButtonContent';
 
-export type ButtonProps = ButtonContentProps & {
-  tooltip?: TooltipProps;
-};
+export type ButtonProps = ButtonContentProps &
+  Partial<LinkProps> & {
+    tooltip?: TooltipProps;
+  };
 
-export const Button = forwardRef((props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) => {
-  if (props.tooltip) {
+export const Button = forwardRef(
+  (
+    {
+      href,
+      as,
+      replace,
+      scroll,
+      shallow,
+      passHref,
+      prefetch,
+      locale,
+      legacyBehavior,
+      tooltip,
+      icon,
+      className,
+      ...props
+    }: ButtonProps,
+    ref: ForwardedRef<HTMLButtonElement>
+  ) => {
+    if (tooltip) {
+      if (href) {
+        return (
+          <Tooltip {...tooltip}>
+            <Link
+              href={href}
+              as={as}
+              replace={replace}
+              scroll={scroll}
+              shallow={shallow}
+              passHref={passHref}
+              prefetch={prefetch}
+              locale={locale}
+              legacyBehavior={legacyBehavior}
+              type={props.type ?? 'button'}
+              className={classNames(styles.button, className, {
+                [styles['has-icon']]: !!icon,
+                [styles['icon-only']]: !!icon && !props.children,
+              })}
+              ref={ref as unknown as ForwardedRef<HTMLButtonElement>}
+              {...(props as any)}
+            >
+              <ButtonContent icon={icon} {...props} />
+            </Link>
+          </Tooltip>
+        );
+      }
+
+      return (
+        <Tooltip {...tooltip}>
+          <button
+            {...props}
+            ref={ref as unknown as ForwardedRef<HTMLButtonElement>}
+            type={props.type ?? 'button'}
+            className={classNames(styles.button, className, {
+              [styles['has-icon']]: !!icon,
+              [styles['icon-only']]: !!icon && !props.children,
+            })}
+          >
+            <ButtonContent icon={icon} {...props} />
+          </button>
+        </Tooltip>
+      );
+    }
+
+    if (href) {
+      return (
+        <Link
+          href={href}
+          as={as}
+          replace={replace}
+          scroll={scroll}
+          shallow={shallow}
+          passHref={passHref}
+          prefetch={prefetch}
+          locale={locale}
+          legacyBehavior={legacyBehavior}
+          type={props.type ?? 'button'}
+          className={classNames(styles.button, className, {
+            [styles['has-icon']]: !!icon,
+            [styles['icon-only']]: !!icon && !props.children,
+          })}
+          ref={ref as unknown as ForwardedRef<HTMLButtonElement>}
+          {...(props as any)}
+        >
+          <ButtonContent icon={icon} {...props} />
+        </Link>
+      );
+    }
+
     return (
-      <Tooltip {...props.tooltip}>
-        <ButtonContent {...props} ref={ref} />
-      </Tooltip>
+      <button
+        {...props}
+        ref={ref as unknown as ForwardedRef<HTMLButtonElement>}
+        type={props.type ?? 'button'}
+        className={classNames(styles.button, className, {
+          [styles['has-icon']]: !!icon,
+          [styles['icon-only']]: !!icon && !props.children,
+        })}
+      >
+        <ButtonContent icon={icon} {...props} />
+      </button>
     );
   }
-
-  return <ButtonContent {...props} ref={ref} />;
-});
+);
 
 Button.displayName = 'Button';

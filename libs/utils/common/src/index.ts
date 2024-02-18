@@ -5,6 +5,7 @@ export * from './lib/async';
 export * from './lib/date';
 export * from './lib/development';
 export * from './lib/form';
+export * from './lib/forward-ref';
 export * from './lib/guards';
 export * from './lib/hooks';
 export * from './lib/object';
