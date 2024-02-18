@@ -129,6 +129,15 @@ export const SliderForm = () => {
 
   const onDrop: DropzoneOptions['onDrop'] = useCallback(
     async ([file]: File[]) => {
+      if (file.name.includes('.jsfx')) {
+        toast.error({
+          title: 'Invalid file',
+          message:
+            "You have uploaded a *.jsfx file. Please upload a preset *.json file instead as we can't process the jsfx.",
+        });
+        return;
+      }
+
       const text = await file.text();
 
       uploadPreset(text);
@@ -139,7 +148,7 @@ export const SliderForm = () => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'text/*': ['.json'],
+      'text/*': ['.json', '.jsfx'],
     },
   });
 
