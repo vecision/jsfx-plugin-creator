@@ -1,0 +1,14 @@
+@use '../../utils/color-helpers' as *;
+
+.tooltip {
+  --_bg: var(--color-bg-3-solid);
+  font-weight: var(--font-weight-light);
+  background: var(--_bg);
+  font-size: 12px;
+
+  :global {
+    .tippy-arrow {
+      color: var(--_bg);
+    }
+  }
+}

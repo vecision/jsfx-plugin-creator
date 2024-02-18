@@ -1,0 +1,83 @@
+.actions {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 0.5em;
+  list-style-type: none;
+  justify-content: var(--_justifyContent);
+
+  &.direction {
+    &-row {
+      flex-flow: column nowrap;
+
+      @container (min-width: 500px) {
+        flex-flow: row nowrap;
+      }
+    }
+    &-column {
+      flex-flow: column nowrap;
+
+      > * {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.button {
+  appearance: none;
+  padding: 0.5em 1em;
+  margin: 0;
+  border-radius: var(--brs-small);
+  background: var(--color-bg-2);
+  transition: background var(--trs-quick), scale var(--trs-quick);
+  scale: 1 1;
+
+  @container (max-width: 499px) {
+    width: 100%;
+  }
+
+  &:focus-visible,
+  &:hover,
+  &:active {
+    transition: background var(--trs-instant), scale var(--trs-instant);
+  }
+
+  &:focus-visible,
+  &:hover {
+    background: var(--color-bg-4);
+  }
+
+  &:active {
+    scale: 1.1 1.1;
+  }
+
+  &.icon-only {
+    --_size: 30px;
+    width: var(--_size);
+    height: var(--_size);
+    background: #{rgba(var(--color-text-rgb), 0.3)};
+    color: var(--color-text-rgb);
+    border-radius: 50%;
+    transition: scale var(--trs-instant);
+    padding: 0.5em;
+
+    &:not([disabled]) {
+      cursor: pointer;
+    }
+
+    &[disabled] {
+      cursor: not-allowed;
+      background: #{rgba(var(--color-text-rgb), 0.15)};
+    }
+
+    &:hover,
+    &:focus-visible {
+      scale: 1.2;
+    }
+
+    svg {
+      scale: var(--_scale, 1 1);
+    }
+  }
+}

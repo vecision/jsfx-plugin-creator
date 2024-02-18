@@ -1,15 +1,17 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, getMinMaxAttributesFromChecks } from '@utils-common';
+import { Form, getMinMaxAttributesFromChecks, persist } from '@utils-common';
 import { saveAs } from 'file-saver';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { Dispatch, InputHTMLAttributes, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useFieldArray, UseFieldArrayReturn, UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 
+import { Button } from '@jsfx-plugins-generator/components/actions/actions';
+import { Dialog } from '@jsfx-plugins-generator/components/dialog/dialog';
 import { Icon } from '@jsfx-plugins-generator/components/icon';
 import { useToast } from '@jsfx-plugins-generator/components/toast/toast';
-import { Tooltip } from '@jsfx-plugins-generator/components/tooltip';
+import { Tooltip } from '@jsfx-plugins-generator/components/tooltip/tooltip';
 
 import { fadeInOut } from '@jsfx-plugins-generator/utils/animations';
 
@@ -178,142 +180,164 @@ export const SliderForm = () => {
     saveAs(fileToSave, fileName);
   };
 
+  const haveShownDialog = persist.session<boolean>('haveShownDialog');
+
+  const introDialog = Dialog.useDialog({
+    isInitiallyOpen: haveShownDialog.get() !== true,
+    onClose: () => {
+      haveShownDialog.set(true);
+    },
+  });
+
   return (
-    <Form form={form} className={styles.form}>
-      <div className={styles.fields}>
-        <fieldset className={styles.info}>
-          <legend>Plugin information</legend>
-          <label>
-            Name
-            <input
-              placeholder={form.isInitialized ? 'Plugin name' : 'Loading...'}
-              className={styles.input}
-              {...form?.register('name')}
-              onFocus={() => setHelperIsHovered('pluginName')}
-              onBlur={e => {
-                form?.register(`name`).onBlur(e);
-                setHelperIsHovered(null);
-              }}
-            />
-          </label>
-
-          <div className={styles.control}>
-            <Tooltip content="Upload preset from clipboard">
-              <button type="button" onClick={handleUploadPresetFromClipboard} data-icon>
-                <Icon icon="CloudArrowUpIcon" />
-              </button>
-            </Tooltip>
-            <Tooltip content="Download preset">
-              <button type="button" onClick={handleDownloadPreset} data-icon>
-                <Icon icon="CloudArrowDownIcon" />
-              </button>
-            </Tooltip>
-            <Tooltip content="Clear">
-              <button
-                type="button"
-                data-icon
-                onClick={() => {
-                  form.reset(defaultValues);
+    <div className={styles.plugin}>
+      <Dialog dialog={introDialog} title="Thank you for using the the JSFX Plugin Generator for Reaper">
+        <p>asdfhasdfh ashfdsa jkh fsdkhj</p>
+        <Dialog.Actions
+          alignment="flex-end"
+          items={[
+            {
+              id: 'confirm',
+              label: 'Got it!',
+              onClick: introDialog.setClose,
+            },
+          ]}
+        />
+      </Dialog>
+      <Form form={form} className={styles.form}>
+        <div className={styles.fields}>
+          <fieldset className={styles.info}>
+            <legend>Plugin information</legend>
+            <label>
+              Name{' '}
+              <input
+                placeholder={form.isInitialized ? 'Plugin name' : 'Loading...'}
+                className={styles.input}
+                {...form?.register('name')}
+                onFocus={() => setHelperIsHovered('pluginName')}
+                onBlur={e => {
+                  form?.register(`name`).onBlur(e);
+                  setHelperIsHovered(null);
                 }}
-              >
-                <Icon icon="TrashIcon" />
-              </button>
-            </Tooltip>
-          </div>
-        </fieldset>
-        <fieldset className={styles.sliders}>
-          <legend>Sliders</legend>
-          <AnimatePresence>
-            {fieldArray.fields.map((field, index) => (
-              <SliderField
-                key={field.id} // important to include key with field's id
-                index={index}
-                form={form}
-                fieldArray={fieldArray}
-                setHelperIsHovered={setHelperIsHovered}
-                {...field}
               />
-            ))}
-          </AnimatePresence>
-        </fieldset>
+            </label>
 
-        <p className={styles.helpers}>
-          <AnimatePresence mode="wait">
-            {helperIsHovered === 'pluginName' && (
-              <motion.span key="pluginName" {...fadeInOut}>
-                The name of the Plugin
-                <br></br>
-                <code>@default {defaultValues.name}</code>
-              </motion.span>
-            )}
-            {helperIsHovered === 'name' && (
-              <motion.span key="name" {...fadeInOut}>
-                The name of the slider
-                <br></br>
-                <code>@default Slider + $index</code>
-              </motion.span>
-            )}
-            {helperIsHovered === 'cc' && (
-              <motion.span key="cc" {...fadeInOut}>
-                The <code>CC</code> value that will be used to send the <code>MIDI</code> data
-                <br></br>
-              </motion.span>
-            )}
-            {helperIsHovered === 'defaultValue' && (
-              <motion.span key="defaultValue" {...fadeInOut}>
-                The default value when resetting the <code>MIDI</code> controller
-                <br></br>
-              </motion.span>
-            )}
-            {helperIsHovered === 'maxValue' && (
-              <motion.span key="maxValue" {...fadeInOut}>
-                The max value of the <code>MIDI</code> controller. Set to <code>1</code> and it will operate as a
-                boolean switch
-                <code>true</code>
-                <code>/</code>
-                <code>false</code>
-                <br></br>
-              </motion.span>
-            )}
-            {helperIsHovered === 'minValue' && (
-              <motion.span key="minValue" {...fadeInOut}>
-                The min value of the <code>MIDI</code> controller
-                <br></br>
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </p>
-      </div>
+            <div className={styles.control}>
+              <Tooltip content="See intro text again">
+                <Button icon={{ icon: 'InformationCircleIcon' }} onClick={introDialog.setOpen} />
+              </Tooltip>
+              <Tooltip content="Upload preset from clipboard">
+                <Button icon={{ icon: 'CloudArrowUpIcon' }} onClick={handleUploadPresetFromClipboard} />
+              </Tooltip>
+              <Tooltip content="Download preset">
+                <Button icon={{ icon: 'CloudArrowDownIcon' }} onClick={handleDownloadPreset} />
+              </Tooltip>
+              <Tooltip content="Clear">
+                <Button
+                  icon={{ icon: 'TrashIcon' }}
+                  onClick={() => {
+                    form.reset(defaultValues);
+                  }}
+                />
+              </Tooltip>
+            </div>
+          </fieldset>
+          <fieldset className={styles.sliders}>
+            <legend>Sliders</legend>
+            <AnimatePresence>
+              {fieldArray.fields.map((field, index) => (
+                <SliderField
+                  key={field.id} // important to include key with field's id
+                  index={index}
+                  form={form}
+                  fieldArray={fieldArray}
+                  setHelperIsHovered={setHelperIsHovered}
+                  {...field}
+                />
+              ))}
+            </AnimatePresence>
+          </fieldset>
 
-      <div className={styles.code}>
-        <h3>Click the code block to copy</h3>
+          <div className={styles.helpers}>
+            <AnimatePresence mode="wait">
+              {helperIsHovered === 'pluginName' && (
+                <motion.p key="pluginName" {...fadeInOut}>
+                  <span>The name of the Plugin</span>
+                  <code>@default {defaultValues.name}</code>
+                </motion.p>
+              )}
+              {helperIsHovered === 'name' && (
+                <motion.p key="name" {...fadeInOut}>
+                  <span>The name of the slider</span>
+                  <code>@default Slider + $index</code>
+                </motion.p>
+              )}
+              {helperIsHovered === 'cc' && (
+                <motion.p key="cc" {...fadeInOut}>
+                  <span>The</span>
+                  <code>CC</code>
+                  <span>value that will be used to send the</span>
+                  <code>MIDI</code>
+                  <span>data</span>
+                </motion.p>
+              )}
+              {helperIsHovered === 'defaultValue' && (
+                <motion.p key="defaultValue" {...fadeInOut}>
+                  <span>The default value when resetting the</span>
+                  <code>MIDI</code>
+                  <span>controller</span>
+                </motion.p>
+              )}
+              {helperIsHovered === 'maxValue' && (
+                <motion.p key="maxValue" {...fadeInOut}>
+                  <span>The max value of the</span>
+                  <code>MIDI</code> <span>controller. Set to</span> <code>1</code>{' '}
+                  <span>and it will operate as a boolean switch</span>
+                  <code>true</code>
+                  <code>/</code>
+                  <code>false</code>
+                </motion.p>
+              )}
+              {helperIsHovered === 'minValue' && (
+                <motion.p key="minValue" {...fadeInOut}>
+                  The min value of the <code>MIDI</code> controller
+                  <br></br>
+                </motion.p>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
 
-        <Tooltip content="Download plugin">
-          <button type="button" onClick={handleDownloadPlugin} className={styles.download}>
-            <Icon icon="DocumentArrowDownIcon" />
+        <div className={styles.code}>
+          <h3>Click the code block to copy</h3>
+
+          <Tooltip content="Download plugin">
+            <button type="button" onClick={handleDownloadPlugin} className={styles.download}>
+              <Icon icon="DocumentArrowDownIcon" />
+            </button>
+          </Tooltip>
+
+          <button
+            type="button"
+            onClick={event => {
+              const { textContent } = event.target as HTMLElement;
+
+              if (!textContent) {
+                return;
+              }
+
+              navigator.clipboard.writeText(textContent);
+
+              toast.success({
+                title: 'Copied to clipboard',
+              });
+            }}
+          >
+            <pre className={styles.pre}>{form.isInitialized ? codeTemplate : 'Loading...'}</pre>
           </button>
-        </Tooltip>
-
-        <button
-          type="button"
-          onClick={event => {
-            const { textContent } = event.target as HTMLElement;
-
-            if (!textContent) {
-              return;
-            }
-
-            navigator.clipboard.writeText(textContent);
-
-            toast.success({
-              title: 'Copied to clipboard',
-            });
-          }}
-        >
-          <pre className={styles.pre}>{form.isInitialized ? codeTemplate : 'Loading...'}</pre>
-        </button>
-      </div>
-    </Form>
+        </div>
+      </Form>
+    </div>
   );
 };
 
@@ -332,6 +356,26 @@ export const SliderField = ({
   form: UseFormReturn<FormSchemaType, any, FormSchemaType>;
   fieldArray: UseFieldArrayReturn<FormSchemaType, 'sliders', 'id'>;
 }) => {
+  const getHelperAttributes = (id: string, fieldId: string) => {
+    const show = () => {
+      return setHelperIsHovered(id as Helpers);
+    };
+
+    const hide: InputHTMLAttributes<HTMLInputElement>['onBlur'] = event => {
+      form?.register(fieldId as keyof FormSchemaType).onBlur(event);
+      setHelperIsHovered(null);
+    };
+
+    return {
+      onMouseOver: show,
+      onFocus: show,
+      // We accept that the type doesn't match here as we don't care about the difference of
+      // input event vs mouse event
+      onMouseLeave: hide as any,
+      onBlur: hide,
+    } satisfies InputHTMLAttributes<HTMLInputElement>;
+  };
+
   return (
     <motion.div
       transition={{ duration: 0.15 }}
@@ -342,21 +386,17 @@ export const SliderField = ({
     >
       <div className={styles.inputs}>
         <label>
-          Name
+          Name{' '}
           <input
             key={id}
             placeholder={name || 'Slider name'}
             className={styles.input}
             {...form?.register(`sliders.${index}.name`)}
-            onFocus={() => setHelperIsHovered('name')}
-            onBlur={e => {
-              form?.register(`sliders.${index}.name`).onBlur(e);
-              setHelperIsHovered(null);
-            }}
+            {...getHelperAttributes('name', `sliders.${index}.name`)}
           />
         </label>
         <label>
-          CC Value
+          CC Value{' '}
           <input
             key={id}
             placeholder={'1'}
@@ -364,15 +404,11 @@ export const SliderField = ({
             type="number"
             {...form?.register(`sliders.${index}.cc`, { valueAsNumber: true })}
             {...getMinMaxAttributesFromChecks(SliderSchema.shape.cc._def.innerType._def.schema._def.checks)}
-            onFocus={() => setHelperIsHovered('cc')}
-            onBlur={e => {
-              form?.register(`sliders.${index}.cc`).onBlur(e);
-              setHelperIsHovered(null);
-            }}
+            {...getHelperAttributes('cc', `sliders.${index}.cc`)}
           />
         </label>
         <label>
-          Default Value
+          Default Value{' '}
           <input
             key={id}
             placeholder={'64'}
@@ -382,15 +418,11 @@ export const SliderField = ({
             {...getMinMaxAttributesFromChecks(
               SliderSchema.shape.defaultValue._def.innerType._def.innerType._def.checks
             )}
-            onFocus={() => setHelperIsHovered('defaultValue')}
-            onBlur={e => {
-              form?.register(`sliders.${index}.defaultValue`).onBlur(e);
-              setHelperIsHovered(null);
-            }}
+            {...getHelperAttributes('defaultValue', `sliders.${index}.defaultValue`)}
           />
         </label>
         <label>
-          Min Value
+          Min Value{' '}
           <input
             key={id}
             placeholder={'0'}
@@ -398,15 +430,11 @@ export const SliderField = ({
             type="number"
             {...form?.register(`sliders.${index}.minValue`, { valueAsNumber: true })}
             {...getMinMaxAttributesFromChecks(SliderSchema.shape.minValue._def.innerType._def.innerType._def.checks)}
-            onFocus={() => setHelperIsHovered('minValue')}
-            onBlur={e => {
-              form?.register(`sliders.${index}.minValue`).onBlur(e);
-              setHelperIsHovered(null);
-            }}
+            {...getHelperAttributes('minValue', `sliders.${index}.minValue`)}
           />
         </label>
         <label>
-          Max Value
+          Max Value{' '}
           <input
             key={id}
             placeholder={'127'}
@@ -414,45 +442,36 @@ export const SliderField = ({
             type="number"
             {...form?.register(`sliders.${index}.maxValue`, { valueAsNumber: true })}
             {...getMinMaxAttributesFromChecks(SliderSchema.shape.maxValue._def.innerType._def.innerType._def.checks)}
-            onFocus={() => setHelperIsHovered('maxValue')}
-            onBlur={e => {
-              form?.register(`sliders.${index}.maxValue`).onBlur(e);
-              setHelperIsHovered(null);
-            }}
+            {...getHelperAttributes('maxValue', `sliders.${index}.maxValue`)}
           />
         </label>
       </div>
       <div className={styles.control}>
         <Tooltip content="Move up">
-          <button data-icon type="button" disabled={index === 0} onClick={() => fieldArray.move(index, index - 1)}>
-            <Icon icon="ChevronUpIcon" />
-          </button>
+          <Button
+            icon={{ icon: 'ChevronUpIcon' }}
+            disabled={index === 0}
+            onClick={() => fieldArray.move(index, index - 1)}
+          />
         </Tooltip>
         <Tooltip content="Move down">
-          <button
-            data-icon
-            type="button"
+          <Button
+            icon={{ icon: 'ChevronDownIcon' }}
             disabled={fieldArray.fields.length === index + 1}
             onClick={() => fieldArray.move(index, index + 1)}
-          >
-            <Icon icon="ChevronDownIcon" />
-          </button>
+          />
         </Tooltip>
         <Tooltip content="Add slider">
-          <button
-            data-icon
-            type="button"
+          <Button
+            icon={{ icon: 'PlusIcon' }}
             onClick={() =>
               fieldArray.insert(index + 1, { ...sliderDefault, name: `Slider${fieldArray.fields.length + 1}` })
             }
-          >
-            <Icon icon="PlusIcon" />
-          </button>
+          />
         </Tooltip>
         <Tooltip content="Remove slider">
-          <button
-            data-icon
-            type="button"
+          <Button
+            icon={{ icon: 'MinusIcon' }}
             disabled={fieldArray.fields.length === 1}
             onClick={() => {
               if (fieldArray.fields.length === 1) {
@@ -461,9 +480,7 @@ export const SliderField = ({
 
               return fieldArray.remove(index);
             }}
-          >
-            <Icon icon="MinusIcon" />
-          </button>
+          />
         </Tooltip>
       </div>
     </motion.div>

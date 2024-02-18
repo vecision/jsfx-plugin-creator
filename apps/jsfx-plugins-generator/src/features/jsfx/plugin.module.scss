@@ -1,9 +1,14 @@
+.plugin {
+  container-type: inline-size;
+}
+
 .form {
   display: grid;
+  max-width: 100%;
   gap: 1em;
-  margin: 1em;
+  padding: 1em;
 
-  @media (min-width: 900px) {
+  @container (min-width: 900px) {
     grid-template-columns: 1fr clamp(300px, 40svw, 700px);
   }
 }
@@ -19,14 +24,26 @@
 }
 
 .helpers {
-  > span {
-    display: inline-block;
-    color: var(--color-text-5);
+  --_margin: 0.5em;
+  position: fixed;
+  left: var(--_margin);
+  top: calc(100svh - var(--_margin));
+  translate: 0 -100%;
+  z-index: 1;
+
+  > p {
+    display: inline-flex;
+    flex-flow: row wrap;
+    max-width: 70ch;
+    line-height: 1.1;
+    gap: 0.25em;
+    color: var(--color-text-3);
     font-size: 14px;
     margin-top: 1em;
     padding: 1em;
+    font-weight: var(--font-weight-light);
     border-radius: var(--brs-medium);
-    background: var(--color-bg-2);
+    background: var(--color-primary-2);
     align-items: center;
   }
 
@@ -97,17 +114,6 @@
     .number {
       width: 80px;
     }
-
-    label {
-      font-size: 10px;
-      color: var(--color-text-6);
-      transition: color var(--trs-quick);
-
-      &:focus-within,
-      &:hover {
-        color: var(--color-text-0);
-      }
-    }
   }
 }
 
@@ -122,8 +128,9 @@
 
   &:hover {
     .pre {
-      color: var(--color-text-3);
+      color: var(--color-text-2);
     }
+
     .download {
       scale: 1.4;
     }
@@ -139,27 +146,25 @@
   }
 
   .pre {
-    font-size: 14px;
-    background: var(--color-bg-1);
-    color: var(--color-text-6);
-    padding: 1.5em;
-    overflow: auto;
-    height: 85svh;
+    min-height: 85svh;
+    font-weight: var(--font-weight-light);
+    height: 100%;
     width: 100%;
-    max-width: 100svw;
-    white-space: break-spaces;
+    max-width: calc(100svw - 2em);
     border-radius: var(--brs-large);
     transition: color var(--trs-quick);
     cursor: url('/assets/copy-paste.png'), auto;
   }
 
   .download {
+    --_size: 24px;
     transition: scale var(--trs-instant);
     position: absolute;
     right: 1em;
-    top: 1em;
-    width: 30px;
-    height: 30px;
+    top: 0;
+    // top: 1em;
+    width: var(--_size);
+    height: var(--_size);
     border-radius: var(--brs-round);
     scale: 1.2;
   }

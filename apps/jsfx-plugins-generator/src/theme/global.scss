@@ -21,6 +21,16 @@
   --color-bg-8: rgba(var(--color-text-rgb), 0.4);
   --color-bg-9: rgba(var(--color-text-rgb), 0.45);
   --color-bg-10: rgba(var(--color-text-rgb), 0.5);
+  --color-bg-1-solid: #{lighten(rgb(var(--color-bg-rgb)), 5%)};
+  --color-bg-2-solid: #{lighten(rgb(var(--color-bg-rgb)), 10%)};
+  --color-bg-3-solid: #{lighten(rgb(var(--color-bg-rgb)), 15%)};
+  --color-bg-4-solid: #{lighten(rgb(var(--color-bg-rgb)), 20%)};
+  --color-bg-5-solid: #{lighten(rgb(var(--color-bg-rgb)), 25%)};
+  --color-bg-6-solid: #{lighten(rgb(var(--color-bg-rgb)), 30%)};
+  --color-bg-7-solid: #{lighten(rgb(var(--color-bg-rgb)), 35%)};
+  --color-bg-8-solid: #{lighten(rgb(var(--color-bg-rgb)), 40%)};
+  --color-bg-9-solid: #{lighten(rgb(var(--color-bg-rgb)), 45%)};
+  --color-bg-10-solid: #{lighten(rgb(var(--color-bg-rgb)), 50%)};
 
   // Text Levels
   --color-text-rgb: var(--color-white-rgb);
@@ -66,4 +76,15 @@
   --trs-base: 0.3s ease-in-out;
   --trs-smooth: 0.6s ease-in-out;
   --trs-long: 1.2s ease-in-out;
+
+  // Font
+  --font-family-noto-sans-mono: 'Noto Sans Mono', monospace;
+  --font-family-noto-sans: 'Noto Sans', sans-serif;
+
+  // Weight
+  --font-weight-thin: 100;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
 }

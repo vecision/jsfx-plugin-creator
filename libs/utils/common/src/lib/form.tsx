@@ -109,7 +109,7 @@ Form.useForm = <TFieldValues extends ReactHookForm.FieldValues = ReactHookForm.F
    */
   const saveValuesToStorage = () => {
     startTransition(() => {
-      if (isServer || !persistKey) return;
+      if (isServer || !persistKey || !isInitialized) return;
 
       persistValues.set(values);
     });
