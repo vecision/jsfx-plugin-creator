@@ -153,6 +153,7 @@ export const SliderForm = () => {
   });
 
   const rootProps = getRootProps();
+  const confirmDialog = Dialog.useDialog();
 
   return (
     <>
@@ -233,7 +234,7 @@ export const SliderForm = () => {
                       },
                       icon: { icon: 'ArrowPathRoundedSquareIcon' },
                       onClick: () => {
-                        form.reset(defaultValues);
+                        confirmDialog.setOpen();
                       },
                     },
                   ]}
@@ -310,7 +311,46 @@ export const SliderForm = () => {
         <Spinner style={{ width: 100, height: 100, opacity: 0.5 }} />
       </Splash>
       <IntroDialog dialog={introDialog} />
+
+      <ResetConfirmDialog
+        dialog={confirmDialog}
+        onNo={confirmDialog.setClose}
+        onYes={() => {
+          form.reset(defaultValues);
+          confirmDialog.setClose();
+        }}
+      />
     </>
+  );
+};
+
+const ResetConfirmDialog = ({
+  dialog,
+  onYes,
+  onNo,
+}: {
+  dialog: DialogProps['dialog'];
+  onYes?: () => void;
+  onNo?: () => void;
+}) => {
+  return (
+    <Dialog dialog={dialog} title="Are you sure you wish to reset the form?">
+      <>
+        <p>This cannot be undone and will reset all your changes back to the initial state.</p>
+        <p>
+          <small>
+            NOTE: If you download the preset before hand, you can always restore that version by uploading it again
+          </small>
+        </p>
+      </>
+      <Dialog.Actions
+        alignment="flex-end"
+        items={[
+          { id: 'no', onClick: onNo, label: 'Cancel' },
+          { id: 'yes', onClick: onYes, label: 'Reset' },
+        ]}
+      />
+    </Dialog>
   );
 };
 

@@ -7,7 +7,7 @@
 
   .content {
     background: var(--color-bg-2-solid);
-    color: var(--color-text-0);
+    color: var(--color-text-3);
     padding: 1.5em;
     min-width: clamp(300px, 40svw, 500px);
     max-width: clamp(300px, 40svw, 500px);
@@ -61,6 +61,7 @@
     .title {
       font-size: 20px;
       font-weight: var(--font-weight-light);
+      color: var(--color-text-0);
     }
 
     .closeIcon {
