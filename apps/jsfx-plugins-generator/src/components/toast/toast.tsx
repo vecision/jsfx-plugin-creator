@@ -34,7 +34,7 @@ export const Toast = ({ title, message, iconProps }: ToastComponentProps) => {
           {message && <div className={styles.message}>{message}</div>}
         </div>
       </div>
-      <div className={styles.actions}></div>
+      <div className={styles.actions} />
     </>
   );
 };

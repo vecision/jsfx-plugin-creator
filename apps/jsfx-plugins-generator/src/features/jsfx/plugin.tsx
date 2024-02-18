@@ -9,7 +9,6 @@ import { z } from 'zod';
 
 import { Button } from '@jsfx-plugins-generator/components/actions/actions';
 import { Dialog } from '@jsfx-plugins-generator/components/dialog/dialog';
-import { Icon } from '@jsfx-plugins-generator/components/icon';
 import { useToast } from '@jsfx-plugins-generator/components/toast/toast';
 import { Tooltip } from '@jsfx-plugins-generator/components/tooltip/tooltip';
 
@@ -40,7 +39,7 @@ const SliderSchema = z.object({
     })
     .optional(),
 });
-type SliderSchemaType = z.infer<typeof SliderSchema>;
+// type SliderSchemaType = z.infer<typeof SliderSchema>;
 
 const FormSchema = z.object({
   /**
@@ -301,7 +300,7 @@ export const SliderForm = () => {
               {helperIsHovered === 'minValue' && (
                 <motion.p key="minValue" {...fadeInOut}>
                   The min value of the <code>MIDI</code> controller
-                  <br></br>
+                  <br />
                 </motion.p>
               )}
             </AnimatePresence>
@@ -312,9 +311,11 @@ export const SliderForm = () => {
           <h3>Click the code block to copy</h3>
 
           <Tooltip content="Download plugin">
-            <button type="button" onClick={handleDownloadPlugin} className={styles.download}>
-              <Icon icon="DocumentArrowDownIcon" />
-            </button>
+            <Button
+              icon={{ icon: 'DocumentArrowDownIcon' }}
+              onClick={handleDownloadPlugin}
+              className={styles.download}
+            />
           </Tooltip>
 
           <button
@@ -371,6 +372,7 @@ export const SliderField = ({
       onFocus: show,
       // We accept that the type doesn't match here as we don't care about the difference of
       // input event vs mouse event
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onMouseLeave: hide as any,
       onBlur: hide,
     } satisfies InputHTMLAttributes<HTMLInputElement>;

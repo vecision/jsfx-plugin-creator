@@ -45,14 +45,14 @@ const useDialog = ({ isInitiallyOpen, onClose, onOpen }: UseDialogParams = {}) =
   const setOpen = useCallback(() => {
     if (!dialogRef.current) return;
 
-    dialogRef.current.showModal();
+    dialogRef.current.showModal?.();
     onOpen?.();
   }, [onOpen]);
 
   const setClose = useCallback(() => {
     if (!dialogRef.current) return;
 
-    dialogRef.current.close();
+    dialogRef.current.close?.();
     onClose?.();
   }, [onClose]);
 
@@ -60,9 +60,9 @@ const useDialog = ({ isInitiallyOpen, onClose, onOpen }: UseDialogParams = {}) =
     if (!dialogRef.current) return;
 
     if (dialogRef.current.open) {
-      dialogRef.current.close();
+      dialogRef.current.close?.();
     } else {
-      dialogRef.current.showModal();
+      dialogRef.current.showModal?.();
     }
   }, []);
 
