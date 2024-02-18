@@ -64,19 +64,17 @@ type ButtonContentProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   icon?: IconProps & { iconPosition?: 'before' | 'after' };
 };
 
-const ButtonContent = forwardRef(
-  ({ icon, children, ...props }: ButtonContentProps, ref: ForwardedRef<HTMLButtonElement>) => {
-    const iconPosition = icon?.iconPosition ?? 'before';
+const ButtonContent = forwardRef(({ icon, children }: ButtonContentProps) => {
+  const iconPosition = icon?.iconPosition ?? 'before';
 
-    return (
-      <>
-        {icon && iconPosition === 'before' && <Icon className={styles.icon} size="24px" {...icon} />}
-        {children}
-        {icon && iconPosition === 'after' && <Icon className={styles.icon} size="24px" {...icon} />}
-      </>
-    );
-  }
-);
+  return (
+    <>
+      {icon && iconPosition === 'before' && <Icon className={styles.icon} {...icon} />}
+      {children}
+      {icon && iconPosition === 'after' && <Icon className={styles.icon} {...icon} />}
+    </>
+  );
+});
 
 ButtonContent.displayName = 'ButtonContent';
 

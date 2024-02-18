@@ -189,7 +189,7 @@ export const SliderForm = () => {
                     {
                       id: 'feature-request',
                       tooltip: { content: 'Support/Feature request' },
-                      icon: { icon: 'QuestionMarkCircleIcon' },
+                      icon: { icon: 'ArrowTopRightOnSquareIcon' },
                       href: `mailto:kaijurox@gmail.com?subject=jsfx-plugin-generator - Bug/Feature Request&body=If you\'re having issues, please enter what you\'re experiencing and what you are expecting should happen.%0A%0AIf it's a feature request, then please write your idea, how it should work and why it would be useful to others.%0A%0AThank you!`,
                       onFocus: () => setHelperIsHovered('featureRequest'),
                       onMouseOver: () => setHelperIsHovered('featureRequest'),
@@ -203,13 +203,13 @@ export const SliderForm = () => {
                     {
                       id: 'intro',
                       tooltip: { content: 'See intro text again' },
-                      icon: { icon: 'InformationCircleIcon' },
+                      icon: { icon: 'SparklesIcon' },
                       onClick: introDialog.setOpen,
                     },
                     {
                       id: 'upload-preset',
                       tooltip: { content: 'Upload preset from clipboard' },
-                      icon: { icon: 'CloudArrowUpIcon' },
+                      icon: { icon: 'ArrowUpTrayIcon' },
                       onClick: handleUploadPresetFromClipboard,
                       onFocus: () => setHelperIsHovered('uploadPreset'),
                       onMouseOver: () => setHelperIsHovered('uploadPreset'),
@@ -223,7 +223,7 @@ export const SliderForm = () => {
                     {
                       id: 'download-preset',
                       tooltip: { content: 'Download preset' },
-                      icon: { icon: 'CloudArrowDownIcon' },
+                      icon: { icon: 'ArrowDownTrayIcon' },
                       onClick: handleDownloadPreset,
                     },
                     {
@@ -231,7 +231,7 @@ export const SliderForm = () => {
                       tooltip: {
                         content: 'Reset the form',
                       },
-                      icon: { icon: 'TrashIcon' },
+                      icon: { icon: 'ArrowPathRoundedSquareIcon' },
                       onClick: () => {
                         form.reset(defaultValues);
                       },
@@ -262,7 +262,7 @@ export const SliderForm = () => {
               <h3 className={styles.title}>Click the code block to copy</h3>
 
               <div className={styles.control}>
-                <Button icon={{ icon: 'DocumentArrowDownIcon' }} onClick={handleDownloadPlugin}>
+                <Button icon={{ icon: 'ArrowDownTrayIcon' }} onClick={handleDownloadPlugin}>
                   Download the plugin
                 </Button>
               </div>
@@ -285,7 +285,7 @@ export const SliderForm = () => {
 
               <Button
                 tooltip={{ content: 'Copy to clipboard' }}
-                icon={{ icon: 'DocumentArrowDownIcon' }}
+                icon={{ icon: 'CursorArrowRaysIcon' }}
                 onClick={handleCopyPresetToClipboard}
                 className={styles.download}
               />
@@ -319,16 +319,11 @@ const IntroDialog = ({ dialog }: { dialog: DialogProps['dialog'] }) => {
     <Dialog dialog={dialog} title="Plugin Generator for Reaper DAW (Cockos)™">
       <p>
         This tool helps you generator JSFX plugins for Reaper DAW (Cockos)™. <br />
-        Adjust the sliders to your match your needs and then download the plugin.
+        Create and adjust the sliders to your match your needs, and then download the plugin.
       </p>
+      <p>If you experience problems, please do not hesitate to contact using the support button in the top</p>
       <p>Thank you for using the the JSFX Plugin Generator for Reaper</p>
 
-      <p>
-        Read more about{' '}
-        <a href="https://www.reaper.fm/sdk/js/js.php" target="_blank">
-          JSFX programming here
-        </a>
-      </p>
       <Dialog.Actions
         alignment="flex-end"
         items={[

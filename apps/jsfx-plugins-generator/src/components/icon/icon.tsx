@@ -15,7 +15,7 @@ export type IconProps = {
 } & Pick<SVGProps<SVGSVGElement>, 'className'>;
 
 export const Icon = forwardRef(
-  ({ icon, style, scale, size = '24px', className, ...rest }: IconProps, ref: ForwardedRef<SVGSVGElement>) => {
+  ({ icon, style, scale = 1.2, size = '28px', className, ...rest }: IconProps, ref: ForwardedRef<SVGSVGElement>) => {
     const Component = Icons[icon];
 
     return (
