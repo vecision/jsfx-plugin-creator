@@ -25,7 +25,7 @@ import styles from './plugin.module.scss';
 
 export const SliderSchema = z.object({
   name: z.string(),
-  defaultValue: z.number().max(127).min(0).default(64).optional(),
+  defaultValue: z.number().max(127).min(0).default(0).optional(),
   maxValue: z.number().max(127).min(0).default(127).optional(),
   minValue: z.number().max(127).min(0).default(0).optional(),
   cc: z
