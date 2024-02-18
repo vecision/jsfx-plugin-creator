@@ -181,7 +181,6 @@ export const SliderForm = () => {
                     tooltip: { content: 'Support/Feature request' },
                     icon: { icon: 'QuestionMarkCircleIcon' },
                     href: 'mailto:kaijurox@gmail.com?subject=jsfx-plugin-generator - Bug/Feature Request&body=Enter a detailed description of the bug or feature request here',
-                    onClick: introDialog.setOpen,
                     onFocus: () => setHelperIsHovered('featureRequest'),
                     onMouseOver: () => setHelperIsHovered('featureRequest'),
                     onBlur: () => {
