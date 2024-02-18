@@ -283,24 +283,24 @@ export const SliderForm = () => {
             </pre>
           </div>
         </Form>
+        <div
+          className={classNames(styles.dropzone, {
+            [styles.dragActive]: isDragActive,
+          })}
+        >
+          <div className={styles.line} />
+          <input {...getInputProps()} />
+          {<p className={styles.text}>Drop here to upload preset</p>}
+        </div>
+        <div className={styles.helpers}>
+          <AnimatePresence mode="wait">{HELPERS?.[helperIsHovered as keyof typeof HELPERS]}</AnimatePresence>
+        </div>
       </div>
 
       <Splash show={!form.isInitialized} delay={haveShownDialog ? 50 : 500}>
         <Spinner style={{ width: 100, height: 100, opacity: 0.5 }} />
       </Splash>
       <IntroDialog dialog={introDialog} />
-      <div
-        className={classNames(styles.dropzone, {
-          [styles.dragActive]: isDragActive,
-        })}
-      >
-        <div className={styles.line} />
-        <input {...getInputProps()} />
-        {<p className={styles.text}>Drop here to upload preset</p>}
-      </div>
-      <div className={styles.helpers}>
-        <AnimatePresence mode="wait">{HELPERS?.[helperIsHovered as keyof typeof HELPERS]}</AnimatePresence>
-      </div>
     </>
   );
 };
