@@ -17,10 +17,19 @@ type ActionProps = {
     visible?: boolean;
   } & Omit<ButtonProps, 'label' | 'id'>)[];
   direction?: 'row' | 'column';
+  mobileDirection?: 'row' | 'column';
   alignment?: CSSProperties['justifyContent'];
 } & React.HTMLAttributes<HTMLUListElement>;
 
-export const Actions = ({ items, direction = 'row', alignment, className, style, ...rest }: ActionProps) => {
+export const Actions = ({
+  items,
+  direction = 'row',
+  mobileDirection,
+  alignment,
+  className,
+  style,
+  ...rest
+}: ActionProps) => {
   const filteredItems = items.filter(item => item.visible !== false);
   const filteredItemsKey = toMemoKey(filteredItems);
 
@@ -33,6 +42,8 @@ export const Actions = ({ items, direction = 'row', alignment, className, style,
         className={classNames(styles.actions, className, {
           [styles['direction-row']]: direction === 'row',
           [styles['direction-column']]: direction === 'column',
+          [styles['mobile-direction-row']]: mobileDirection === 'row',
+          [styles['mobile-direction-column']]: mobileDirection === 'column',
         })}
         style={{ ...style, ...toCSSProperties({ justifyContent: alignment }) }}
       >

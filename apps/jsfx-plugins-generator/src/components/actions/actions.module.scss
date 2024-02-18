@@ -8,17 +8,27 @@
 
   &.direction {
     &-row {
-      flex-flow: column nowrap;
-
-      @container (min-width: 500px) {
-        flex-flow: row nowrap;
-      }
+      flex-flow: row nowrap;
     }
     &-column {
       flex-flow: column nowrap;
 
       > * {
         width: 100%;
+      }
+    }
+  }
+
+  &.mobile-direction {
+    &-column {
+      @container (max-width: 499px) {
+        flex-flow: column nowrap;
+      }
+    }
+
+    &-row {
+      @container (max-width: 499px) {
+        flex-flow: row nowrap;
       }
     }
   }
