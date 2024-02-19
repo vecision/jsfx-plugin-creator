@@ -263,7 +263,18 @@ export const SliderForm = () => {
               <h3 className={styles.title}>Click the code block to copy</h3>
 
               <div className={styles.control}>
-                <Button icon={{ icon: 'ArrowDownTrayIcon' }} onClick={handleDownloadPlugin}>
+                <Button
+                  icon={{ icon: 'ArrowDownTrayIcon' }}
+                  onClick={handleDownloadPlugin}
+                  onFocus={() => setHelperIsHovered('downloadPlugin')}
+                  onMouseOver={() => setHelperIsHovered('downloadPlugin')}
+                  onBlur={() => {
+                    setHelperIsHovered(null);
+                  }}
+                  onMouseLeave={() => {
+                    setHelperIsHovered(null);
+                  }}
+                >
                   Download the plugin
                 </Button>
               </div>
@@ -361,9 +372,12 @@ const IntroDialog = ({ dialog }: { dialog: DialogProps['dialog'] }) => {
         This tool helps you generator JSFX plugins for Reaper DAW (Cockos)™. <br />
         Create and adjust the sliders to your match your needs, and then download the plugin.
       </p>
+      <p>
+        Place the downloaded plugin in the <br />
+        <code>Reaper Resources/Effects/midi</code> directory and refresh your VSTs.
+      </p>
       <p>If you experience problems, please do not hesitate to contact using the support button in the top</p>
       <p>Thank you for using the the JSFX Plugin Generator for Reaper</p>
-
       <Dialog.Actions
         alignment="flex-end"
         items={[
@@ -379,13 +393,24 @@ const IntroDialog = ({ dialog }: { dialog: DialogProps['dialog'] }) => {
   );
 };
 
-export type Helpers = keyof FormSchemaType['sliders'][0] | 'pluginName' | 'uploadPreset' | 'featureRequest';
+export type Helpers =
+  | keyof FormSchemaType['sliders'][0]
+  | 'pluginName'
+  | 'uploadPreset'
+  | 'featureRequest'
+  | 'downloadPlugin';
 
 const HELPERS = {
+  downloadPlugin: (
+    <motion.p key="downloadPlugin" {...fadeInOut}>
+      <p>
+        Place the downloaded plugin in the <code>Reaper Resources/Effects/midi</code> directory and refresh your VSTs.
+      </p>
+    </motion.p>
+  ),
   pluginName: (
     <motion.p key="pluginName" {...fadeInOut}>
       <span>The name of the Plugin</span>
-      <code>@default {defaultValues.name}</code>
     </motion.p>
   ),
   name: (
