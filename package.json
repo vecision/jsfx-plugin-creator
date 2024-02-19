@@ -9,6 +9,7 @@
   "dependencies": {
     "@heroicons/react": "^2.1.1",
     "@hookform/resolvers": "^3.3.4",
+    "@next/third-parties": "^14.1.0",
     "@nx/devkit": "17.3.0",
     "@nx/js": "17.3.2",
     "@nx/next": "17.3.2",
