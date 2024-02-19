@@ -11,7 +11,7 @@ import styles from './plugin.module.scss';
 type SliderProps = FormSchemaType['sliders'][0];
 
 export const sliderDefault: Omit<SliderProps, 'name'> = {
-  defaultValue: 64,
+  defaultValue: 0,
   maxValue: 127,
   minValue: 0,
   cc: undefined,
