@@ -141,6 +141,7 @@ export const SliderForm = () => {
       const text = await file.text();
 
       uploadPreset(text);
+      window.gtag('event', 'onDrop');
     },
     [uploadPreset]
   );
@@ -192,6 +193,7 @@ export const SliderForm = () => {
                       tooltip: { content: 'Support/Feature request' },
                       icon: { icon: 'ArrowTopRightOnSquareIcon' },
                       href: `mailto:kaijurox@gmail.com?subject=jsfx-plugin-generator - Bug/Feature Request&body=If you\'re having issues, please enter what you\'re experiencing and what you are expecting should happen.%0A%0AIf it's a feature request, then please write your idea, how it should work and why it would be useful to others.%0A%0AThank you!`,
+                      onClick: () => window.gtag('event', 'featureRequest'),
                       onFocus: () => setHelperIsHovered('featureRequest'),
                       onMouseOver: () => setHelperIsHovered('featureRequest'),
                       onBlur: () => {
@@ -205,13 +207,19 @@ export const SliderForm = () => {
                       id: 'intro',
                       tooltip: { content: 'See intro text again' },
                       icon: { icon: 'SparklesIcon' },
-                      onClick: introDialog.setOpen,
+                      onClick: () => {
+                        introDialog.setOpen();
+                        window.gtag('event', 'introDialog.setOpen');
+                      },
                     },
                     {
                       id: 'upload-preset',
                       tooltip: { content: 'Upload preset from clipboard' },
                       icon: { icon: 'ArrowUpTrayIcon' },
-                      onClick: handleUploadPresetFromClipboard,
+                      onClick: () => {
+                        handleUploadPresetFromClipboard();
+                        window.gtag('event', 'handleUploadPresetFromClipboard');
+                      },
                       onFocus: () => setHelperIsHovered('uploadPreset'),
                       onMouseOver: () => setHelperIsHovered('uploadPreset'),
                       onBlur: () => {
@@ -225,7 +233,10 @@ export const SliderForm = () => {
                       id: 'download-preset',
                       tooltip: { content: 'Download preset' },
                       icon: { icon: 'ArrowDownTrayIcon' },
-                      onClick: handleDownloadPreset,
+                      onClick: () => {
+                        handleDownloadPreset();
+                        window.gtag('event', 'handleDownloadPreset');
+                      },
                     },
                     {
                       id: 'reset',
@@ -265,7 +276,10 @@ export const SliderForm = () => {
               <div className={styles.control}>
                 <Button
                   icon={{ icon: 'ArrowDownTrayIcon' }}
-                  onClick={handleDownloadPlugin}
+                  onClick={() => {
+                    handleDownloadPlugin();
+                    window.gtag('event', 'handleDownloadPlugin');
+                  }}
                   onFocus={() => setHelperIsHovered('downloadPlugin')}
                   onMouseOver={() => setHelperIsHovered('downloadPlugin')}
                   onBlur={() => {
@@ -298,7 +312,10 @@ export const SliderForm = () => {
               <Button
                 tooltip={{ content: 'Copy to clipboard' }}
                 icon={{ icon: 'CursorArrowRaysIcon' }}
-                onClick={handleCopyPresetToClipboard}
+                onClick={() => {
+                  handleCopyPresetToClipboard();
+                  window.gtag('event', 'handleCopyPresetToClipboard');
+                }}
                 className={styles.download}
               />
             </pre>
@@ -358,7 +375,14 @@ const ResetConfirmDialog = ({
         alignment="flex-end"
         items={[
           { id: 'no', onClick: onNo, label: 'Cancel' },
-          { id: 'yes', onClick: onYes, label: 'Reset' },
+          {
+            id: 'yes',
+            onClick: () => {
+              onYes?.();
+              window.gtag('event', 'reset');
+            },
+            label: 'Reset',
+          },
         ]}
       />
     </Dialog>
