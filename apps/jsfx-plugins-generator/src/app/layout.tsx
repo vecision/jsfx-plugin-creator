@@ -1,3 +1,5 @@
+import { GoogleAnalytics } from '@next/third-parties/google';
+import { Analytics } from '@vercel/analytics/react';
 import classNames from 'classnames';
 import { Noto_Sans, Noto_Sans_Mono } from 'next/font/google';
 import { cookies } from 'next/headers';
@@ -43,6 +45,8 @@ export default function RootLayout({
         </head>
         <body>
           <main>{children}</main>
+          <GoogleAnalytics gaId="G-2WRDHYCVCQ" />
+          <Analytics />
         </body>
       </html>
     </ServerProviders>
