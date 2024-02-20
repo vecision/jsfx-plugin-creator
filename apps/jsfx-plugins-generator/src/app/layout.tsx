@@ -1,5 +1,6 @@
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import classNames from 'classnames';
 import { Noto_Sans, Noto_Sans_Mono } from 'next/font/google';
 import { cookies } from 'next/headers';
@@ -47,6 +48,7 @@ export default function RootLayout({
           <main>{children}</main>
           <GoogleAnalytics gaId="G-2WRDHYCVCQ" />
           <Analytics />
+          <SpeedInsights />
         </body>
       </html>
     </ServerProviders>
