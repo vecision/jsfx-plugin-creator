@@ -7,7 +7,7 @@ import { SliderForm } from '@jsfx-plugins-generator/features/jsfx/plugin';
 export const metadata: Metadata = {
   title: 'JSFX Plugin Generator for Reaper DAW (Cockos)',
   description:
-    'This tool helps you generator JSFX plugins for Reaper DAW (Cockos)™. Create and adjust the sliders to your match your needs, and then download the plugin. Place the downloaded plugin in the Reaper source directory and then refresh the effects list.',
+    'A tool to generate a JSFX plugins for Reaper DAW. Create and adjust sliders to your match your needs and download the plugin',
   keywords: [
     'jsfx',
     'no code',
